@@ -263,17 +263,27 @@
       (* Itération 1 *)
       if i = 1 && j = 1
       then BK_empty
-      else BK_simple 
+      else BK_simple || BK_double || BK_block || BK_bonus
     ;;
     
     let brick_hit(game, i, j : t_camlbrick * int * int)  : t_brick_kind = 
       (* Itération 1 *)
-      BK_empty
+      if brick_get(i, k) = BK_simple
+        then BK_empty
+      else if brick_get(i, k) = BK_double
+        then BK_simple
+      else if brick_get(i, k) = BK_block
+        then BK_block
     ;;
     
     let brick_color(game,i,j : t_camlbrick * int * int) : t_camlbrick_color = 
       (* Itération 1 *)
-      ORANGE
+      if brick_get(i, k) = BK_simple
+        then ORANGE
+      else if brick_get(i, k) = BK_double
+        then BLUE
+      else if brick_get(i, k) = BK_block
+        then WHITE
     ;;
     
     
