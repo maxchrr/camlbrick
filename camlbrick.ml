@@ -105,6 +105,8 @@
 
 
     (* Itération 1 *)
+    (** Definie un vecteur
+        @author Paul Ourliac*)
     type t_vec2 = {
       x : int ;
       y : int
@@ -116,6 +118,7 @@
       Les entiers représentent la composante en X et en Y du vecteur.
 
       Vous devez modifier cette fonction.
+      @author Paul Ourliac
       @param x première composante du vecteur
       @param y seconde composante du vecteur
       @return Renvoie le vecteur dont les composantes sont (x,y).
@@ -127,6 +130,7 @@
 
     (**
       Cette fonction renvoie un vecteur qui est la somme des deux vecteurs donnés en arguments.
+      @author Paul Ourliac
       @param a premier vecteur
       @param b second vecteur
       @return Renvoie un vecteur égale à la somme des vecteurs.
@@ -146,7 +150,12 @@
       vec2_add(a, make_vec2(x,y))
     ;;
       ]}
+<<<<<<< HEAD
 
+=======
+    
+      @author Paul Ourliac
+>>>>>>> master
       @param a premier vecteur
       @param x composante en x du second vecteur
       @param y composante en y du second vecteur
