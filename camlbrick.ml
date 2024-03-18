@@ -75,8 +75,8 @@ type t_brick_kind = BK_empty | BK_simple | BK_double | BK_block | BK_bonus;;
   Retourne le type de brique pour représenter les briques de vide.
   C'est à dire, l'information qui encode l'absence de brique à un emplacement sur la grille du monde.
 
-  @return Renvoie le type correspondant à la notion de vide.
   @deprecated Cette fonction est utilisé en interne.
+  @return Renvoie le type correspondant à la notion de vide.
 *)
 let make_empty_brick () : t_brick_kind =
   BK_empty
