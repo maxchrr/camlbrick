@@ -1,13 +1,11 @@
 (**
-  Ce module Camlbrick représente le noyau fonctionnel du jeu de casse-brique nommé <b>camlbrick</b>
-  (un jeu de mot entre le jeu casse-brique et le mot ocaml).
+  Ce module Camlbrick représente le noyau fonctionnel du jeu de casse-brique nom.
 
-  Le noyau fonctionnel consiste à réaliser l'ensemble des structures et autres fonctions capables
-  d'être utilisées par une interface graphique. Par conséquent, dans ce module il n'y a aucun
-  aspect visuel! Vous pouvez utiliser le mode console.
+  Le noyau fonctionnel consiste à réaliser l'ensemble des structures et autres fonctions capables d'être utilisées par une interface graphique.
+  Par conséquent, dans ce module il n'y a aucun aspect visuel.
+  Vous pouvez cependant utiliser le mode console.
 
-  Le principe du jeu de casse-brique consiste à faire disparaître toutes les briques d'un niveau
-  en utilisant les rebonds d'une balle depuis une raquette contrôlée par l'utilisateur.
+  Le principe du jeu de casse-brique consiste à faire disparaître toutes les briques d'un niveau en utilisant les rebonds d'une balle depuis une raquette contrôlée par l'utilisateur.
 
   @author Max Charrier
   @author Paul Ourliac
@@ -103,102 +101,114 @@
     type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
 
 
+(* .--------------------------------------------------. *)
+(* |__     __        _                    ____  ____  | *)
+(* |\ \   / /__  ___| |_ ___ _   _ _ __  |___ \|  _ \ | *)
+(* | \ \ / / _ \/ __| __/ _ \ | | | '__|   __) | | | || *)
+(* |  \ V /  __/ (__| ||  __/ |_| | |     / __/| |_| || *)
+(* |   \_/ \___|\___|\__\___|\__,_|_|    |_____|____/ | *)
+(* '--------------------------------------------------' *)
+
+
 (**
-  Définition d'un vecteur en coordonnée cartésienne.
+  Définition des composantes d'un vecteur.
 *)
 type t_vec2 = {
   x : int;
   y : int
 };;
 
+(**
+  Création un vecteur 2D à partir de deux entiers.
+  Les entiers représentent la composante en X et en Y du vecteur.
 
-    (**
-      Cette fonction permet de créer un vecteur 2D à partir de deux entiers.
-      Les entiers représentent la composante en X et en Y du vecteur.
+  @author Paul Ourliac
+  @param x première composante du vecteur
+  @param y seconde composante du vecteur
+  @return vecteur dont les composantes sont (x,y).
+*)
+let make_vec2(x, y : int * int) : t_vec2 =
+  {
+    x = x;
+    y = y
+  }
+;;
 
-      Vous devez modifier cette fonction.
-      @author Paul Ourliac
-      @param x première composante du vecteur
-      @param y seconde composante du vecteur
-      @return Renvoie le vecteur dont les composantes sont (x,y).
-    *)
-    let make_vec2(x,y : int * int) : t_vec2 =
-      (* Itération 1 *)
-      ({ x = x ; y = y })
-    ;;
+(**
+  Somme des composantes de deux vecteurs.
 
-    (**
-      Cette fonction renvoie un vecteur qui est la somme des deux vecteurs donnés en arguments.
-      @author Paul Ourliac
-      @param a premier vecteur
-      @param b second vecteur
-      @return Renvoie un vecteur égale à la somme des vecteurs.
-    *)
-    let vec2_add(a,b : t_vec2 * t_vec2) : t_vec2 =
-      (* Itération 1 *)
-      ({ x = a.x + b.x ; y = a.y + b.y})
-    ;;
+  @author Paul Ourliac
+  @param a premier vecteur
+  @param b second vecteur
+  @return vecteur égale à la somme des vecteurs.
+*)
+let vec2_add(a, b : t_vec2 * t_vec2) : t_vec2 =
+  {
+    x = a.x + b.x;
+    y = a.y + b.y
+  }
+;;
 
-    (**
-      Cette fonction renvoie un vecteur égale à la somme d'un vecteur
-      donné en argument et un autre vecteur construit à partir de (x,y).
+(**
+  Somme des composantes d'un vecteur et d'un vecteur construit à partir de (x,y).
 
-      Cette fonction est une optimisation du code suivant (que vous ne devez pas faire en l'état):
-      {[
+  Il s'agit d'une optimisation du code suivant :
+  {[
     let vec2_add_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
       vec2_add(a, make_vec2(x,y))
     ;;
-      ]}
-<<<<<<< HEAD
+  ]}
 
-=======
+  @author Paul Ourliac
+  @param a premier vecteur
+  @param x composante en x du second vecteur
+  @param y composante en y du second vecteur
+  @return vecteur égale à la somme du vecteur et du vecteur construit.
+*)
+let vec2_add_scalar(a, x, y : t_vec2 * int * int) : t_vec2 =
+  {
+    x = a.x + x;
+    y = a.y + y
+  }
+;;
 
-      @author Paul Ourliac
->>>>>>> master
-      @param a premier vecteur
-      @param x composante en x du second vecteur
-      @param y composante en y du second vecteur
-      @return Renvoie un vecteur qui est la résultante du vecteur
-    *)
-    let vec2_add_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
-      (* Itération 1 *)
-      ({x = a.x + x ; y = a.y + y})
-    ;;
+(**
+  Multiplication des composantes de deux vecteurs.
 
+  @author Max Charrier
+  @param a premier vecteur
+  @param b second vecteur
+  @return vecteur égale à la multiplication des vecteurs.
+*)
+let vec2_mult(a, b : t_vec2 * t_vec2) : t_vec2 =
+  {
+    x = a.x * b.x;
+    y = a.y * b.y
+  }
+;;
 
-    (**
-      Cette fonction calcul un vecteur où
-      ses composantes sont la résultante de la multiplication  des composantes de deux vecteurs en entrée.
-      Ainsi,
-        {[
-        c_x = a_x * b_x
-        c_y = a_y * b_y
-        ]}
-      @param a premier vecteur
-      @param b second vecteur
-      @return Renvoie un vecteur qui résulte de la multiplication des composantes.
-    *)
-    let vec2_mult(a,b : t_vec2 * t_vec2) : t_vec2 =
-      (* Itération 1 *)
-      ()
-    ;;
+(**
+  Multiplication des composantes d'un vecteur et d'un vecteur construit à partir de (x,y).
 
-    (**
-      Cette fonction calcul la multiplication des composantes du vecteur a et du vecteur construit à partir de (x,y).
-      Cette fonction est une optimisation du code suivant (que vous ne devez pas faire en l'état):
-      {[
+  Il s'agit d'une optimisation du code suivant :
+  {[
     let vec2_mult_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
       vec2_mult(a, make_vec2(x,y))
     ;;
-      ]}
+  ]}
 
-    *)
-    let vec2_mult_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
-      (* Itération 1 *)
-      ()
-    ;;
-
-
+  @author Max Charrier
+  @param a premier vecteur
+  @param x composante en x du second vecteur
+  @param y composante en y du second vecteur
+  @return vecteur égale à la multiplication du vecteur et du vecteur construit.
+*)
+let vec2_mult_scalar(a, x, y : t_vec2 * int * int) : t_vec2 =
+  {
+    x = a.x * x;
+    y = a.y * y
+  }
+;;
 
     (* Itération 2 *)
     type t_ball = unit;;
