@@ -103,14 +103,13 @@
     type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
 
 
-
-    (* Itération 1 *)
-    (** Definie un vecteur
-        @author Paul Ourliac*)
-    type t_vec2 = {
-      x : int ;
-      y : int
-    };;
+(**
+  Définition d'un vecteur en coordonnée cartésienne.
+*)
+type t_vec2 = {
+  x : int;
+  y : int
+};;
 
 
     (**
@@ -153,7 +152,7 @@
 <<<<<<< HEAD
 
 =======
-    
+
       @author Paul Ourliac
 >>>>>>> master
       @param a premier vecteur
