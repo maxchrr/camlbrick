@@ -27,15 +27,6 @@
 let frames = ref 0;;
 
 (**
-  Représentation des différentes couleurs prise en charge par notre moteur de jeu.
-
-  NE PAS MODIFIER CE TYPE !
-
-  @deprecated Ne pas modifier ce type !
-*)
-type t_camlbrick_color = WHITE | BLACK | GRAY | LIGHTGRAY | DARKGRAY | BLUE | RED | GREEN | YELLOW | CYAN | MAGENTA | ORANGE | LIME | PURPLE;;
-
-(**
   Attributs globaux pour paramétrer le casse-brique
 
   <b>Attention:</b> Il doit y avoir des cohérences entre les différents paramètres:
@@ -63,6 +54,29 @@ type t_camlbrick_param = {
 };;
 
 (**
+  Représentation des différents états du jeu.
+
+  Les trois états de base sont :
+  <ul>
+  <li>[GAMEOVER]: qui indique si une partie est finie typiquement lors du lancement du jeu</li>
+  <li>[PLAYING]: qui indique qu'une partie est en cours d'exécution</li>
+  <li>[PAUSING]: indique qu'une partie en cours d'exécution est actuellement en pause</li>
+  </ul>
+
+  Dans le cadre des extensions, possibilité de modifier ce type pour adopter d'autres états du jeu selon le besoin.
+*)
+type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
+
+(**
+  Représentation des différentes couleurs prise en charge par notre moteur de jeu.
+
+  NE PAS MODIFIER CE TYPE !
+
+  @deprecated Ne pas modifier ce type !
+*)
+type t_camlbrick_color = WHITE | BLACK | GRAY | LIGHTGRAY | DARKGRAY | BLUE | RED | GREEN | YELLOW | CYAN | MAGENTA | ORANGE | LIME | PURPLE;;
+
+(**
   Représentation des différents types de briques.
 
   NE PAS MODIFIER CE TYPE !
@@ -75,8 +89,8 @@ type t_brick_kind = BK_empty | BK_simple | BK_double | BK_block | BK_bonus;;
   Retourne le type de brique pour représenter les briques de vide.
   C'est à dire, l'information qui encode l'absence de brique à un emplacement sur la grille du monde.
 
-  @deprecated Cette fonction est utilisé en interne.
   @return Renvoie le type correspondant à la notion de vide.
+  @deprecated Cette fonction est utilisé en interne.
 *)
 let make_empty_brick () : t_brick_kind =
   BK_empty
@@ -97,20 +111,6 @@ type t_ball_size = BS_SMALL | BS_MEDIUM | BS_BIG;;
   Possibilité d'ajouter d'autres valeurs sans modifier les valeurs existantes.
 *)
 type t_paddle_size = PS_SMALL | PS_MEDIUM | PS_BIG;;
-
-(**
-  Représentation des différents états du jeu.
-
-  Les trois états de base sont :
-  <ul>
-  <li>[GAMEOVER]: qui indique si une partie est finie typiquement lors du lancement du jeu</li>
-  <li>[PLAYING]: qui indique qu'une partie est en cours d'exécution</li>
-  <li>[PAUSING]: indique qu'une partie en cours d'exécution est actuellement en pause</li>
-  </ul>
-
-  Dans le cadre des extensions, possibilité de modifier ce type pour adopter d'autres états du jeu selon le besoin.
-*)
-type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
 
 (**
   Définition des composantes d'un vecteur.
@@ -220,7 +220,6 @@ type t_paddle = unit;;
 
 (* Itération 1, 2, 3 et 4 *)
 type t_camlbrick = unit;;
-
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
