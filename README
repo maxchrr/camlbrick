@@ -23,7 +23,8 @@ La difficulté du jeu consiste à rattraper la balle avec la raquette pour la
 guider vers les briques restantes du niveau. Une balle peut rebondir sur les
 bords latéraux et le bord haut de la carte. Elle rebondit aussi sur les
 briques. Cependant, si une balle dépasse la zone de rebond de la raquette
-alors la balle est détruite. Le jeu est perdu lorsqu'il n'y a plus de balle à l'écran.
+alors la balle est détruite. Le jeu est perdu lorsqu'il n'y a plus de balle à
+l'écran.
 
 
    Motivations
