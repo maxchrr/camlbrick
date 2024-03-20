@@ -299,9 +299,21 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   (* Itération 1 *)
   game.(i).(j)
 ;;
-
-let brick_hit (game, i, j : t_camlbrick * int * int)  : t_brick_kind =
-  (* Itération 1 *)
+(**Cette fonction retrace grace au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type precedemment
+    @author Axel De Les Champs--Vieira*)
+let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
+  let l_change = game.(i).(j) in
+    if l_change = (BK_bonus)
+        then game.(i).(j) <- BK_empty
+  else if l_change = (BK_simple)
+        then game.(i).(j) <- BK_empty
+  else if l_change = (BK_double)
+        then game.(i).(j) <- BK_simple
+  else  l_change.(i).(j) = (BK_block)
+        then game.(i).(j) <- BK_block
+;;
+(* Itération 1 *)
+  
   BK_empty
 ;;
 
