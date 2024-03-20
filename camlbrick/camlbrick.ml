@@ -312,10 +312,7 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   else  l_change.(i).(j) = (BK_block)
         then game.(i).(j) <- BK_block
 ;;
-(* Itération 1 *)
-  
-  BK_empty
-;;
+
 
 (** Renvoie la couleur de la brick en fonction des coordonee 
     @author Paul Ourliac*)
