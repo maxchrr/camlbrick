@@ -219,7 +219,7 @@ type t_ball = unit;;
 type t_paddle = unit;;
 
 (* Itération 1, 2, 3 et 4 *)
-type t_camlbrick = unit;;
+type t_camlbrick = t_brick_kind array array;;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
