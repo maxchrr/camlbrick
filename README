@@ -20,7 +20,7 @@ Le jeu du casse-brique donne la possibilité de contrôle, à un humain, d'une
 raquette qui ne peut que se déplacer horizontalement en bas de l'écran. Cette
 raquette permet de faire rebondir une balle qui se déplace dans le niveau. Si
 une balle touche une brique alors cette dernière est détruite. L'objectif est
-donc de détruire toutes les briques destructiblesdu niveau.
+donc de détruire toutes les briques destructibles du niveau.
 
 La difficulté du jeu consiste à rattraper la balle avec la raquette pour la
 guider vers les briques restantes du niveau. Une balle peut rebondir sur les
