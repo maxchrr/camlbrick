@@ -1,5 +1,5 @@
 (**
-  Ce module Camlbrick représente le noyau fonctionnel du jeu de casse-brique nom.
+  Ce module CamlBrick représente le noyau fonctionnel du jeu de casse-brique.
 
   Le noyau fonctionnel consiste à réaliser l'ensemble des structures et autres fonctions capables d'être utilisées par une interface graphique.
   Par conséquent, dans ce module il n'y a aucun aspect visuel.
@@ -260,7 +260,7 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
 *)
 let make_camlbrick() : t_camlbrick =
   (* Itération 1, 2, 3 et 4 *)
-  ()
+  [|[|BK_empty|]|]
 ;;
 
 
@@ -315,12 +315,12 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
 ;;
 
 
-(** Renvoie la couleur de la brick en fonction des coordonee 
+(** Renvoie la couleur de la brick en fonction des coordonee
     @author Paul Ourliac*)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   (* Itération 1 *)
-  let l_type : t_brick_kind = game.(i).(j) in 
-  if l_type = BK_empty 
+  let l_type : t_brick_kind = game.(i).(j) in
+  if l_type = BK_empty
   then BLACK
   else
     if l_type = BK_simple
