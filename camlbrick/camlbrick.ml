@@ -260,7 +260,7 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
 *)
 let make_camlbrick() : t_camlbrick =
   (* Itération 1, 2, 3 et 4 *)
-  ()
+  [|[|BK_empty|]|]
 ;;
 
 
