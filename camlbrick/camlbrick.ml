@@ -309,8 +309,9 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
         then game.(i).(j) <- BK_empty
   else if l_change = (BK_double)
         then game.(i).(j) <- BK_simple
-  else  l_change.(i).(j) = (BK_block)
+  else  if l_change = (BK_block)
         then game.(i).(j) <- BK_block
+  else ()
 ;;
 
 
