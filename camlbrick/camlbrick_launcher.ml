@@ -1,15 +1,11 @@
 open Camlbrick;;
 open Camlbrick_gui;;
 
+let game : t_camlbrick = make_camlbrick ();;
+let param : t_camlbrick_param = param_get game;;
 
-let game = make_camlbrick();;
-let param = param_get(game);;
-
-(*
-  Chargez votre niveau par defaut ici   
-  
-*)
+(* Charger le niveau par défaut ici *)
 
 
 (* fonction qui lance le jeu *)
-launch_camlbrick(param,game);;
+launch_camlbrick (param, game);;

@@ -27,15 +27,6 @@
 let frames = ref 0;;
 
 (**
-  Représentation des différentes couleurs prise en charge par notre moteur de jeu.
-
-  NE PAS MODIFIER CE TYPE !
-
-  @deprecated Ne pas modifier ce type !
-*)
-type t_camlbrick_color = WHITE | BLACK | GRAY | LIGHTGRAY | DARKGRAY | BLUE | RED | GREEN | YELLOW | CYAN | MAGENTA | ORANGE | LIME | PURPLE;;
-
-(**
   Attributs globaux pour paramétrer le casse-brique
 
   <b>Attention:</b> Il doit y avoir des cohérences entre les différents paramètres:
@@ -61,6 +52,29 @@ type t_camlbrick_param = {
 
   time_speed : int ref;       (** indique l'écoulement du temps en millisecondes (c'est une durée approximative) *)
 };;
+
+(**
+  Représentation des différents états du jeu.
+
+  Les trois états de base sont :
+  <ul>
+  <li>[GAMEOVER]: qui indique si une partie est finie typiquement lors du lancement du jeu</li>
+  <li>[PLAYING]: qui indique qu'une partie est en cours d'exécution</li>
+  <li>[PAUSING]: indique qu'une partie en cours d'exécution est actuellement en pause</li>
+  </ul>
+
+  Dans le cadre des extensions, possibilité de modifier ce type pour adopter d'autres états du jeu selon le besoin.
+*)
+type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
+
+(**
+  Représentation des différentes couleurs prise en charge par notre moteur de jeu.
+
+  NE PAS MODIFIER CE TYPE !
+
+  @deprecated Ne pas modifier ce type !
+*)
+type t_camlbrick_color = WHITE | BLACK | GRAY | LIGHTGRAY | DARKGRAY | BLUE | RED | GREEN | YELLOW | CYAN | MAGENTA | ORANGE | LIME | PURPLE;;
 
 (**
   Représentation des différents types de briques.
@@ -97,20 +111,6 @@ type t_ball_size = BS_SMALL | BS_MEDIUM | BS_BIG;;
   Possibilité d'ajouter d'autres valeurs sans modifier les valeurs existantes.
 *)
 type t_paddle_size = PS_SMALL | PS_MEDIUM | PS_BIG;;
-
-(**
-  Représentation des différents états du jeu.
-
-  Les trois états de base sont :
-  <ul>
-  <li>[GAMEOVER]: qui indique si une partie est finie typiquement lors du lancement du jeu</li>
-  <li>[PLAYING]: qui indique qu'une partie est en cours d'exécution</li>
-  <li>[PAUSING]: indique qu'une partie en cours d'exécution est actuellement en pause</li>
-  </ul>
-
-  Dans le cadre des extensions, possibilité de modifier ce type pour adopter d'autres états du jeu selon le besoin.
-*)
-type t_gamestate = GAMEOVER | PLAYING | PAUSING;;
 
 (**
   Définition des composantes d'un vecteur.
@@ -221,7 +221,6 @@ type t_paddle = unit;;
 (* Itération 1, 2, 3 et 4 *)
 type t_camlbrick = unit;;
 
-
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
 
@@ -294,22 +293,44 @@ let string_of_gamestate(game : t_camlbrick) : string =
   "INCONNU"
 ;;
 
+(** Renvoie le type de la brick en fonction ndes coordinee
+    @author Paul Ourliac*)
 let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   (* Itération 1 *)
-  if i = 1 && j = 1 then
-    BK_empty
-  else
-    BK_simple
+  game.(i).(j)
+;;
+(**Cette fonction retrace grace au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type precedemment
+    @author Axel De Les Champs--Vieira*)
+let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
+  let l_change = game.(i).(j) in
+    if l_change = (BK_bonus)
+        then game.(i).(j) <- BK_empty
+  else if l_change = (BK_simple)
+        then game.(i).(j) <- BK_empty
+  else if l_change = (BK_double)
+        then game.(i).(j) <- BK_simple
+  else  l_change.(i).(j) = (BK_block)
+        then game.(i).(j) <- BK_block
 ;;
 
-let brick_hit (game, i, j : t_camlbrick * int * int)  : t_brick_kind =
-  (* Itération 1 *)
-  BK_empty
-;;
 
+(** Renvoie la couleur de la brick en fonction des coordonee 
+    @author Paul Ourliac*)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   (* Itération 1 *)
-  ORANGE
+  let l_type : t_brick_kind = game.(i).(j) in 
+  if l_type = BK_empty 
+  then BLACK
+  else
+    if l_type = BK_simple
+    then GREEN
+    else
+      if l_type = BK_double
+      then RED
+      else
+        if l_type = BK_block
+        then ORANGE
+        else BLUE
 ;;
 
 let paddle_x (game : t_camlbrick) : int=
