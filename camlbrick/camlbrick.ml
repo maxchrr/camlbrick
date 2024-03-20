@@ -293,12 +293,11 @@ let string_of_gamestate(game : t_camlbrick) : string =
   "INCONNU"
 ;;
 
+(** Renvoie le type de la brick en fonction ndes coordinee
+    @author Paul Ourliac*)
 let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   (* Itération 1 *)
-  if i = 1 && j = 1 then
-    BK_empty
-  else
-    BK_simple
+  game.(i).(j)
 ;;
 
 let brick_hit (game, i, j : t_camlbrick * int * int)  : t_brick_kind =
@@ -306,9 +305,23 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : t_brick_kind =
   BK_empty
 ;;
 
+(** Renvoie la couleur de la brick en fonction des coordonee 
+    @author Paul Ourliac*)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   (* Itération 1 *)
-  ORANGE
+  let l_type : t_brick_kind = game.(i).(j) in 
+  if l_type = BK_empty 
+  then BLACK
+  else
+    if l_type = BK_simple
+    then GREEN
+    else
+      if l_type = BK_double
+      then RED
+      else
+        if l_type = BK_block
+        then ORANGE
+        else BLUE
 ;;
 
 let paddle_x (game : t_camlbrick) : int=
