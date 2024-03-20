@@ -1,9 +1,24 @@
-(*#directory "+labltk";;
+(**
+  Ce module Camlbrick GUI représente l'interface graphique du jeu de casse-brique.
+
+  Il comprend les éléments nécessaires pour afficher le jeu à l'utilisateur et permettre une interaction intuitive avec celui-ci.
+
+  @author Hakim Ferrier-Belhaouari
+  @author Agnès Arnould
+  @author Max Charrier
+*)
+
+(*
+Pour faire fonctionner le LSP (commande toplevel)
+
+#directory "+labltk";;
 #load "labltk.cma";;
+#mod_use "camlbrick.ml";;
+*)
 
-#mod_use "camlbrick.ml";;*)
-
-(* https://who.rocq.inria.fr/Francois.Thomasset/Labltk/Tutoriel_FT/ *)
+(*
+Plus d'information -> https://who.rocq.inria.fr/Francois.Thomasset/Labltk/Tutoriel_FT/
+*)
 
 open Tk
 open Printf
