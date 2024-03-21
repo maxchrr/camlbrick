@@ -1,2 +1,3 @@
 .DS_STORE
-camlbrick*.cm*
+*.cm*
+CPtest.ml
