@@ -1,24 +1,32 @@
+# Définition du répertoire LablTk en fonction du système d'exploitation
+ifeq ($(shell uname -s),Darwin)
+	LABLTK_DIR := ~/.opam/4.13.1/lib/labltk
+else
+	LABLTK_DIR := +labltk
+endif
+
+# Répertoire contenant les fichiers source OCaml
+SRC_DIR := camlbrick
+
+# Règle implicite pour compiler les fichiers .ml en .cmo
 %.cmo: %.ml
-	ocamlc -c -I "+labltk" labltk.cma -I camlbrick %.ml
+	ocamlc -c -I $(LABLTK_DIR) labltk.cma -I $(SRC_DIR) $<
 
-build-linux: camlbrick.cmo
-	ocamlc -c camlbrick/camlbrick.ml
-	ocamlc -c -I "+labltk" labltk.cma -I camlbrick camlbrick.cmo camlbrick/camlbrick_gui.ml
-	ocamlc -c -I camlbrick camlbrick.cmo camlbrick_gui.cmo camlbrick/camlbrick_launcher.ml
-	ocamlc -o bin/camlbrick -I "+labltk" labltk.cma -I camlbrick camlbrick.cmo camlbrick_gui.cmo camlbrick_launcher.cmo
+# Cible de build
+build: $(SRC_DIR)/camlbrick.cmo $(SRC_DIR)/camlbrick_gui.cmo $(SRC_DIR)/camlbrick_launcher.cmo
+	mkdir -p bin
+	ocamlc -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma -I $(SRC_DIR) $^
 
-build-mac:
-	ocamlc -c camlbrick/camlbrick.ml
-	ocamlc -c -I ~/.opam/4.13.1/lib/labltk labltk.cma -I camlbrick camlbrick.cmo camlbrick/camlbrick_gui.ml
-	ocamlc -c -I camlbrick camlbrick.cmo camlbrick_gui.cmo camlbrick/camlbrick_launcher.ml
-	ocamlc -o bin/camlbrick -I ~/.opam/4.13.1/lib/labltk labltk.cma -I camlbrick camlbrick.cmo camlbrick_gui.cmo camlbrick_launcher.cmo
-
+# Cible pour générer la documentation HTML
 html:
-	ocamldoc -html -d docs -charset utf8 camlbrick/*.ml
+	ocamldoc -html -d docs -charset utf8 $(SRC_DIR)/*.ml
 
+# Cible pour compresser les fichiers source et la documentation
 compress:
-	tar -czvf camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz camlbrick/*.ml docs tests/*.ml
+	tar -czvf camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz $(SRC_DIR)/*.ml docs test/*.ml
 
+# Cible pour nettoyer les fichiers générés lors de la compilation
 clean:
-	rm -r bin/*
-	rm -r */*.cm*
+	rm -rf bin */*.cm* camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz
+
+.PHONY: build html compress clean
