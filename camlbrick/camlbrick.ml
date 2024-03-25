@@ -212,14 +212,15 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
   }
 ;;
 
-(* Itération 2 *)
-type t_ball = unit;;
+(** Ce type permet de définir les différents paramètre d'une ball
+    @author Axel De Les Champs--Vieira*)
+type t_ball  = {position : int * int ; vitesse : t_vec2 ;taille : t_ball_size}
 
 (* Itération 2 *)
 type t_paddle = unit;;
 
 (* Itération 1, 2, 3 et 4 *)
-type t_camlbrick = t_brick_kind array array;;
+type t_camlbrick = {matrix : t_brick_kind array array; param_ball : t_ball list } ;;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -353,24 +354,30 @@ let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
   ()
   ;;
-
+(**Cette fonction renvoie un booléen en fonction du nombre de ball en jeu
+    @author Axel De Les Champs-Vieira*)
 let has_ball (game : t_camlbrick) : bool =
-  (* Itération 2 *)
-  false
+  if game.param_ball = [] then
+    false
+else
+  true
 ;;
 
+(**Cette fonction renvoie le nombre de ball en jeu 
+    @author Axel De Les Champs--Vieira*)
 let balls_count (game : t_camlbrick) : int =
-  (* Itération 2 *)
-  0
+  if game.param_ball = [] then 0
+  else game.param_ball = List.length
 ;;
 
+(**Cette fonction renvoie la liste du nombre de ball
+    @author Axel De Les Champs--Vieira*)
 let balls_get (game : t_camlbrick) : t_ball list =
-  (* Itération 2 *)
-  []
+  game.param_ball 
 ;;
+
 
 let ball_get (game, i : t_camlbrick * int) : t_ball =
-  (* Itération 2 *)
   ()
 ;;
 
