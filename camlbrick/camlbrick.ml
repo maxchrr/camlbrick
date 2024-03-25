@@ -363,14 +363,20 @@ let paddle_size_pixel (game : t_camlbrick) : int =
     @author Paul Ourliac*)
 let paddle_move_left (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  fst(game.paddle.position) := !fst(game.paddle.position) - 1
+  let l_param : t_camlbrick_param = param_get game in 
+  if paddle_x(game) < 0
+  then fst(game.paddle.position) := !fst(game.paddle.position) - 1
+  else ()
 ;;
 
 (**Deplace la raquette vers la droite
 @author Paul Ourliac *)
 let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  fst(game.paddle.position) := !fst(game.paddle.position) + 1
+  let l_param : t_camlbrick_param = param_get game in 
+  if (paddle_x(game) * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
+  then fst(game.paddle.position) := !fst(game.paddle.position) + 1
+  else ()
 ;;
 
 let has_ball (game : t_camlbrick) : bool =
