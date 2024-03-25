@@ -7,6 +7,8 @@ let test_fonc_brick_color_empty () : unit =
     assert_equals (BLACK, test_get res)
 ;;
 
+@author Matéo Abrane
+
 let test_fonc_make_vec2 () : unit =
   let res : t_vec2 t_test_result = test_exec (make_vec2, "make_vec2" (1, 1)) in
 
