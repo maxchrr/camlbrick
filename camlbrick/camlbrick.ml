@@ -216,10 +216,10 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 type t_ball = unit;;
 
 (* Itération 2 *)
-type t_paddle = unit;;
+type t_paddle = { taille :  ref (int * int) ; position : (ref int) * int };;
 
 (* Itération 1, 2, 3 et 4 *)
-type t_camlbrick = t_brick_kind array array;;
+type t_camlbrick = {matrix : t_brick_kind array array ; paddle : t_paddle };;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -336,23 +336,25 @@ let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
 
 let paddle_x (game : t_camlbrick) : int=
   (* Itération 2 *)
-  0
+  let (l_x,_) : int * int = game.paddle.position in
+  !l_x
 ;;
 
 let paddle_size_pixel (game : t_camlbrick) : int =
   (* Itération 2 *)
-  0
+  let (_,l_width) : int * int = !(game.paddle.position) in
+  l_width
 ;;
 
 let paddle_move_left (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  ()
+  fst(game.paddle.position) := !fst(game.paddle.position) - 1
 ;;
 
 let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  ()
-  ;;
+  fst(game.paddle.position) := !fst(game.paddle.position) + 1
+;;
 
 let has_ball (game : t_camlbrick) : bool =
   (* Itération 2 *)
