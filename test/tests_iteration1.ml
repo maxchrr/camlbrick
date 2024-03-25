@@ -1,7 +1,7 @@
 open CPtest;;
 open Camlbrick;;
 
-(**
+(* *
   @author Max Charrier
 *)
 let test_fonc_brick_color_empty () : unit =
@@ -40,7 +40,7 @@ let test_fonc_brick_color_block () : unit =
 (**
   @author Max Charrier
 *)
-let test_fonc_brick_color_bonys () : unit =
+let test_fonc_brick_color_bonus () : unit =
   let res : t_camlbrick_color t_test_result = test_exec (brick_color, "brick_color_bonus", ([| [| BK_bonus |] |], 0, 0)) in
 
     assert_equals (BLUE, test_get res)
@@ -76,5 +76,12 @@ let test_fonc_vec2_mult () : unit =
 test_reset_report ();;
 
 test_fonc_brick_color_empty ();;
+test_fonc_brick_color_simple ();;
+test_fonc_brick_color_double ();;
+test_fonc_brick_color_block ();;
+test_fonc_brick_color_bonus ();;
+test_fonc_make_vec2 ();;
+test_fonc_vec2_add ();;
+test_fonc_vec2_mult ();;
 
 test_report ();;
