@@ -7,12 +7,12 @@ endif
 
 # Règle implicite pour compiler les fichiers .ml en .cmo
 %.cmo: %.ml
-	ocamlc -c -I $(LABLTK_DIR) labltk.cma -I . $<
+	ocamlc -c -I $(LABLTK_DIR) labltk.cma $<
 
 # Cible de build
 build: camlbrick.cmo camlbrick_gui.cmo camlbrick_launcher.cmo
 	mkdir -p bin
-	ocamlc -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma -I . $^
+	ocamlc -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma $^
 
 # Cible de test
 test: camlbrick.cmo CPtest.cmo
