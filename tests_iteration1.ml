@@ -1,3 +1,8 @@
+#directory "test";;
+#directory "camlbrick";;
+#load "CPtest.cmo";;
+#load "camlbrick.cmo";;
+
 open CPtest;;
 open Camlbrick;;
 
