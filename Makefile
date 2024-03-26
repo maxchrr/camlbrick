@@ -11,16 +11,14 @@ else
 	LABLTK_DIR = +labltk
 endif
 
-LABLTK = $(LABLTK_DIR) labltk.cma
-
 # Cible de build
 build: $(OBJ)
 	mkdir -p bin
-	$(CAMLC) -o bin/camlbrick -I $(LABLTK) $^
+	$(CAMLC) -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma $^
 
 # Règle implicite pour compiler les fichiers .ml en .cmo
 %.cmo: %.ml
-	$(CAMLC) -c -I $(LABLTK) $<
+	$(CAMLC) -c -I $(LABLTK_DIR) labltk.cma $<
 
 # Cible de test
 test: camlbrick.cmo CPtest.cmo
