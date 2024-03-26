@@ -5,12 +5,16 @@ else
 	LABLTK_DIR = +labltk
 endif
 
+SRC = camlbrick.ml camlbrick_gui.ml camlbrick_launcher.ml
+
+OBJ = $(SRC:.ml=.cmo)
+
 # Règle implicite pour compiler les fichiers .ml en .cmo
 %.cmo: %.ml
 	ocamlc -c -I $(LABLTK_DIR) labltk.cma $<
 
 # Cible de build
-build: camlbrick.cmo camlbrick_gui.cmo camlbrick_launcher.cmo
+build: $(OBJ)
 	mkdir -p bin
 	ocamlc -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma $^
 
@@ -21,7 +25,7 @@ test: camlbrick.cmo CPtest.cmo
 
 # Cible pour générer la documentation HTML
 html:
-	ocamldoc -html -d docs -charset utf8 camlbrick.ml camlbrick_gui.ml camlbrick_launcher.ml
+	ocamldoc -html -d docs -charset utf8 $(SRC)
 
 # Cible pour compresser les fichiers source et la documentation
 compress:
