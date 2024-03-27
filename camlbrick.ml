@@ -214,7 +214,7 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 
 (** Ce type permet de définir les différents paramètre d'une ball
     @author Axel De Les Champs--Vieira*)
-type t_ball  = {position : int * int ; vitesse : t_vec2 ;taille : t_ball_size}
+type t_ball  = {position : int * int ; vitesse : t_vec2 ; taille : t_ball_size}
 
 (* Itération 2 *)
 type t_paddle = unit;;
@@ -354,7 +354,8 @@ let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
   ()
   ;;
-(**Cette fonction renvoie un booléen en fonction du nombre de ball en jeu
+(**Cette fonction renvoie un booléen en fonction 
+  du nombre de ball en jeu.
     @author Axel De Les Champs-Vieira*)
 let has_ball (game : t_camlbrick) : bool =
   if game.param_ball = [] then
@@ -363,42 +364,64 @@ else
   true
 ;;
 
-(**Cette fonction renvoie le nombre de ball en jeu 
+(**Cette fonction renvoie le nombre de ball en jeu. 
     @author Axel De Les Champs--Vieira*)
 let balls_count (game : t_camlbrick) : int =
   if game.param_ball = [] then 0
   else game.param_ball = List.length
 ;;
 
-(**Cette fonction renvoie la liste du nombre de ball
+(**Cette fonction renvoie la liste du nombre de ball.
     @author Axel De Les Champs--Vieira*)
 let balls_get (game : t_camlbrick) : t_ball list =
   game.param_ball 
 ;;
 
-
+(**Cette fonction permet de trouver l'indice d'un int 
+    rentréer en paramètre.
+    @author Axel De Les Champs--Vieira*)
 let ball_get (game, i : t_camlbrick * int) : t_ball =
-  ()
-;;
-
+  let fin_liste : t_ball list ref =
+    game.param_ball
+  in 
+  let compteur : int ref = ref 0 in
+    while compteur != i do
+      (fin_liste := List.tl(!fin_liste);
+      compteur := !compteur + 1)
+    done;
+    List.hd(!fin_liste)
+  ;;
+(**Renvoie les coordonner x (absicces de la ball)
+    @author Axel De Les Champs--Vieira*)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  let (x,_) = ball.position in
+  x
 ;;
-
+(**Renvoie les coordonner y (ordonnées de la ball)
+    @author Axel De Les Champs--Vieira*)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  let (_,y) = ball.position in
+  y
 ;;
-
+(**Renvoie le diamètre des 3 tailles de types de ball
+    @author Axel De Les Champs--Vieira*)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  if ball.taille = BS_SMALL then
+    20
+  else if ball.taille = BS_MEDIUM then
+    50
+  else if ball.taille = BS_BIG then
+    80
 ;;
-
+(**Cette fonction permet de donner une couleur différentes pour chaque taille de balle
+    @author Axel De Les Champs--Vieira*)
 let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
-  (* Itération 2 *)
-  GRAY
+  if game.param_ball = BS_SMALL then
+    t_camlbrick_color = LIME
+  else if game.param_ball = BS_MEDIUM
+    t_camlbrock_color = LIGHTGRAY
+  else if game.param_ball = BS_BIG
+    t_calmbrock_color = GREY
 ;;
 
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
