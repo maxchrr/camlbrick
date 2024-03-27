@@ -218,12 +218,12 @@ type t_ball = unit;;
 (* Itération 2 *)
 (** Definie le type de la raquette
     @author Paul Ourliac*)
-type t_paddle = { taille :  t_paddle_size ; position : (ref int) * int };;
+type t_paddle = { taille :  t_paddle_size ; position : (int ref) * int };;
 
 (* Itération 1, 2, 3 et 4 *)
 (** Definie le type du jeu 
     @author Paul Ourliac*)
-type t_camlbrick = {matrix : t_brick_kind array array ; paddle : t_paddle };;
+type t_camlbrick = {param: t_camlbrick_param ; matrix : t_brick_kind array array ; paddle : t_paddle };;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -254,19 +254,8 @@ let make_camlbrick_param () : t_camlbrick_param = {
 *)
 let param_get (game : t_camlbrick) : t_camlbrick_param =
   (* Itération 1 *)
-  make_camlbrick_param()
+  game.param
 ;;
-
-(**
-  Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
-  @author Max Charrier
-  @return partie correctement initialisé.
-*)
-let make_camlbrick() : t_camlbrick =
-  (* Itération 1, 2, 3 et 4 *)
-  [|[|BK_empty|]|]
-;;
-
 
 (**
   Création d'une raquette par défaut au milieu de l'écran et de taille normal.
@@ -276,6 +265,16 @@ let make_camlbrick() : t_camlbrick =
 let make_paddle () : t_paddle =
   (* Itération 2 *)
   {taille = PS_MEDIUM; position = (ref 0 ,0)}
+;;
+
+(**
+  Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
+  @author Max Charrier
+  @return partie correctement initialisé.
+*)
+let make_camlbrick() : t_camlbrick =
+  (* Itération 1, 2, 3 et 4 *)
+  {param = make_camlbrick_param() ; matrix= Array.make_matrix 8 30 BK_empty  ; paddle = make_paddle()}
 ;;
 
 let make_ball (x, y, size : int * int * int) : t_ball =
@@ -308,7 +307,7 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   let l_change = brick_get(game,i,j) in
     if l_change = (BK_bonus)
-        then game.marix.(i).(j) <- BK_empty
+        then game.matrix.(i).(j) <- BK_empty
   else if l_change = (BK_simple)
         then game.matrix.(i).(j) <- BK_empty
   else if l_change = (BK_double)
@@ -342,7 +341,7 @@ let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   @author Paul Ourliac*)
 let paddle_x (game : t_camlbrick) : int=
   (* Itération 2 *)
-  let (l_x,_) : int * int = game.paddle.position in
+  let (l_x,_) : int ref * int = game.paddle.position in
   !l_x
 ;;
 
@@ -363,9 +362,8 @@ let paddle_size_pixel (game : t_camlbrick) : int =
     @author Paul Ourliac*)
 let paddle_move_left (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  let l_param : t_camlbrick_param = param_get game in 
   if paddle_x(game) < 0
-  then fst(game.paddle.position) := !fst(game.paddle.position) - 1
+  then fst(game.paddle.position) := !(fst(game.paddle.position)) - 1
   else ()
 ;;
 
@@ -375,7 +373,7 @@ let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
   let l_param : t_camlbrick_param = param_get game in 
   if (paddle_x(game) * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
-  then fst(game.paddle.position) := !fst(game.paddle.position) + 1
+  then fst(game.paddle.position) := !(fst(game.paddle.position)) + 1
   else ()
 ;;
 
