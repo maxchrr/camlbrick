@@ -275,7 +275,7 @@ let make_paddle () : t_paddle =
 let make_camlbrick() : t_camlbrick =
   let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
 
-  let map : t_brick_kind array array = Array.make_matrix 30 10 BK_empty in
+  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
 
   for x = 0 to Array.length map - 1 do
     for y = 0 to Array.length map.(x) - 1 do
