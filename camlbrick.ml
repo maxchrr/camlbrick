@@ -215,13 +215,13 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 (* Itération 2 *)
 type t_ball = unit;;
 
-(* Itération 2 *)
-(** Definie le type de la raquette
-    @author Paul Ourliac*)
+(**
+  Définition de la raquette par sa taille et sa position en mouvement (référence).
+*)
 type t_paddle = { taille :  t_paddle_size ; position : (int ref) * int };;
 
 (* Itération 1, 2, 3 et 4 *)
-(** Definie le type du jeu 
+(** Definie le type du jeu
     @author Paul Ourliac*)
 type t_camlbrick = {param: t_camlbrick_param ; matrix : t_brick_kind array array ; paddle : t_paddle };;
 
@@ -273,8 +273,21 @@ let make_paddle () : t_paddle =
   @return partie correctement initialisé.
 *)
 let make_camlbrick() : t_camlbrick =
-  (* Itération 1, 2, 3 et 4 *)
-  {param = make_camlbrick_param() ; matrix= Array.make_matrix 8 30 BK_empty  ; paddle = make_paddle()}
+  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
+
+  let map : t_brick_kind array array = Array.make_matrix 30 10 BK_empty in
+
+  for x = 0 to Array.length map - 1 do
+    for y = 0 to Array.length map.(x) - 1 do
+      map.(x).(y) <- tab.(Random.int (Array.length tab))
+    done;
+  done;
+
+  {
+    param = make_camlbrick_param ();
+    matrix = map;
+    paddle = make_paddle ()
+  }
 ;;
 
 let make_ball (x, y, size : int * int * int) : t_ball =
@@ -337,7 +350,7 @@ let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
         else BLUE
 ;;
 
-(** Renvoie la position selon l'axe x de la raquette 
+(** Renvoie la position selon l'axe x de la raquette
   @author Paul Ourliac*)
 let paddle_x (game : t_camlbrick) : int=
   (* Itération 2 *)
@@ -345,20 +358,20 @@ let paddle_x (game : t_camlbrick) : int=
   !l_x
 ;;
 
-(** Renvoie la taille en pixel de la raquette 
+(** Renvoie la taille en pixel de la raquette
     @author Paul Ourliac*)
 let paddle_size_pixel (game : t_camlbrick) : int =
   (* Itération 2 *)
-  let l_param : t_camlbrick_param = param_get game in 
+  let l_param : t_camlbrick_param = param_get game in
   if game.paddle.taille = PS_MEDIUM
-  then l_param.paddle_init_width 
-  else 
+  then l_param.paddle_init_width
+  else
     if game.paddle.taille = PS_BIG
     then l_param.paddle_init_width * 2
     else l_param.paddle_init_width / 2
 ;;
 
-(** Deplace la raquette vers la gauche 
+(** Deplace la raquette vers la gauche
     @author Paul Ourliac*)
 let paddle_move_left (game : t_camlbrick) : unit =
   (* Itération 2 *)
@@ -371,7 +384,7 @@ let paddle_move_left (game : t_camlbrick) : unit =
 @author Paul Ourliac *)
 let paddle_move_right (game : t_camlbrick) : unit =
   (* Itération 2 *)
-  let l_param : t_camlbrick_param = param_get game in 
+  let l_param : t_camlbrick_param = param_get game in
   if (paddle_x(game) * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
   then fst(game.paddle.position) := !(fst(game.paddle.position)) + 1
   else ()
