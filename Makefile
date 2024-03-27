@@ -22,7 +22,7 @@ build: $(OBJ)
 
 # Cible de test
 test: camlbrick.cmo CPtest.cmo
-	utop tests_iteration1.ml
+	ocaml tests_iteration2.ml
 	@make clean
 
 # Cible pour générer la documentation HTML
