@@ -215,11 +215,19 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 (* Itération 2 *)
 type t_ball = unit;;
 
-(* Itération 2 *)
-type t_paddle = unit;;
+(**
+  Définition de la raquette par sa taille et sa position en mouvement sur l'axe X.
+*)
+type t_paddle = { size : t_paddle_size ; position : (int ref) * int };;
 
-(* Itération 1, 2, 3 et 4 *)
-type t_camlbrick = t_brick_kind array array;;
+(**
+  Représentation du jeu de manière fonctionnel, avec tout les composants affichés à l'écran.
+*)
+type t_camlbrick = {
+  param: t_camlbrick_param;
+  matrix : t_brick_kind array array;
+  paddle : t_paddle
+};;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -249,29 +257,41 @@ let make_camlbrick_param () : t_camlbrick_param = {
   @return paramétrage actuel.
 *)
 let param_get (game : t_camlbrick) : t_camlbrick_param =
-  (* Itération 1 *)
-  make_camlbrick_param()
+  game.param
+;;
+
+(**
+  Création d'une raquette par défaut au milieu de l'écran et de taille normal.
+
+  @author Paul Ourliac
+  @deprecated Cette fonction est là juste pour le debug ou pour débuter certains traitements de test.
+*)
+let make_paddle () : t_paddle =
+  {size = PS_MEDIUM; position = (ref 0 ,0)}
 ;;
 
 (**
   Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
 
+  @author Max Charrier
   @return partie correctement initialisé.
 *)
 let make_camlbrick() : t_camlbrick =
-  (* Itération 1, 2, 3 et 4 *)
-  [|[|BK_empty|]|]
-;;
+  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
 
+  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
 
-(**
-  Création d'une raquette par défaut au milieu de l'écran et de taille normal.
+  for x = 0 to Array.length map - 1 do
+    for y = 0 to Array.length map.(x) - 1 do
+      map.(x).(y) <- tab.(Random.int (Array.length tab))
+    done;
+  done;
 
-  @deprecated Cette fonction est là juste pour le debug ou pour débuter certains traitements de test.
-*)
-let make_paddle () : t_paddle =
-  (* Itération 2 *)
-  ()
+  {
+    param = make_camlbrick_param ();
+    matrix = map;
+    paddle = make_paddle ()
+  }
 ;;
 
 let make_ball (x, y, size : int * int * int) : t_ball =
@@ -293,66 +313,107 @@ let string_of_gamestate(game : t_camlbrick) : string =
   "INCONNU"
 ;;
 
-(** Renvoie le type de la brick en fonction ndes coordinee
-    @author Paul Ourliac*)
+(**
+  Renvoie le type de la brick en fonction ndes coordinee
+
+  @author Paul Ourliac
+*)
 let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
-  (* Itération 1 *)
-  game.(i).(j)
+  game.matrix.(i).(j)
 ;;
-(**Cette fonction retrace grace au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type precedemment
-    @author Axel De Les Champs--Vieira*)
+
+(**
+  Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
+  @author Axel De Les Champs--Vieira
+*)
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
-  let l_change = game.(i).(j) in
-    if l_change = (BK_bonus)
-        then game.(i).(j) <- BK_empty
-  else if l_change = (BK_simple)
-        then game.(i).(j) <- BK_empty
-  else if l_change = (BK_double)
-        then game.(i).(j) <- BK_simple
-  else  if l_change = (BK_block)
-        then game.(i).(j) <- BK_block
+  let l_change = brick_get(game,i,j) in
+
+  if l_change = (BK_bonus) then
+    game.matrix.(i).(j) <- BK_empty
+  else if l_change = (BK_simple) then
+    game.matrix.(i).(j) <- BK_empty
+  else if l_change = (BK_double) then
+    game.matrix.(i).(j) <- BK_simple
+  else if l_change = (BK_block) then
+    game.matrix.(i).(j) <- BK_block
   else ()
 ;;
 
+(**
+  Renvoie la couleur de la bricque en fonction des coordonnées.
 
-(** Renvoie la couleur de la brick en fonction des coordonee
-    @author Paul Ourliac*)
+  @author Paul Ourliac
+*)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
-  (* Itération 1 *)
-  let l_type : t_brick_kind = game.(i).(j) in
-  if l_type = BK_empty
-  then BLACK
+  let l_type : t_brick_kind = brick_get(game,i,j) in
+
+  if l_type = BK_empty then
+    BLACK
+  else if l_type = BK_simple then
+    GREEN
+  else if l_type = BK_double then
+    RED
+  else if l_type = BK_block then
+    ORANGE
   else
-    if l_type = BK_simple
-    then GREEN
-    else
-      if l_type = BK_double
-      then RED
-      else
-        if l_type = BK_block
-        then ORANGE
-        else BLUE
+    BLUE
 ;;
 
+(**
+  Renvoie la position selon l'axe x de la raquette
+
+  @author Paul Ourliac
+*)
 let paddle_x (game : t_camlbrick) : int=
-  (* Itération 2 *)
-  0
+  let (l_x,_) : int ref * int = game.paddle.position in
+
+  !l_x
 ;;
 
+(**
+  Renvoie la taille en pixel de la raquette
+
+  @author Paul Ourliac
+*)
 let paddle_size_pixel (game : t_camlbrick) : int =
-  (* Itération 2 *)
-  0
+  let l_param : t_camlbrick_param = param_get game in
+
+  if game.paddle.size = PS_MEDIUM then
+    l_param.paddle_init_width
+  else if game.paddle.size = PS_BIG then
+    l_param.paddle_init_width * 2
+  else
+    l_param.paddle_init_width / 2
 ;;
 
+(**
+  Déplace la raquette vers la gauche
+
+  @author Paul Ourliac
+*)
 let paddle_move_left (game : t_camlbrick) : unit =
-  (* Itération 2 *)
-  ()
+  if paddle_x (game) < 0 then
+    fst game.paddle.position := !(fst game.paddle.position) - 1
+  else
+    ()
 ;;
 
+(**
+  Déplace la raquette vers la droite
+
+  @author Paul Ourliac
+*)
 let paddle_move_right (game : t_camlbrick) : unit =
-  (* Itération 2 *)
-  ()
-  ;;
+  let l_param : t_camlbrick_param = param_get game in
+
+  if
+    (paddle_x game * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
+  then
+    fst game.paddle.position := !(fst game.paddle.position) + 1
+  else
+    ()
+;;
 
 let has_ball (game : t_camlbrick) : bool =
   (* Itération 2 *)
