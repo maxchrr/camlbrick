@@ -64,35 +64,56 @@ let cbg_convert_color(color) =
 ;;
 
 
-let cbg_brick_update(param, game, cbgui, i, j) =
-  let brick = brick_get(game, i,j) in
+let cbg_brick_update (param, game, cbgui, i, j) =
+  let brick = brick_get (game, i, j) in
   let brick_gui = cbgui.world_gui.(i).(j) in
   let brick_prev = cbgui.world_prev.(i).(j) in
+
   if brick != brick_prev then
     begin
-      (Canvas.delete (cbgui.canvas) [brick_gui]);
+      Canvas.delete (cbgui.canvas) [brick_gui];
+
       let color = brick_color(game, i,j) in
       let tkcolor = cbg_convert_color(color) in
       let c_BRICK_WIDTH = param.brick_width
       and c_BRICK_HEIGHT= param.brick_height
       in
+
       (* and outline = if brick = make_empty_brick() then  else `Yellow *)
       let x1 = (i*c_BRICK_WIDTH) and x2 = ((i+1) * c_BRICK_WIDTH) - 1
       and y1 = (j*c_BRICK_HEIGHT) and y2 = ((j+1) * c_BRICK_HEIGHT) - 1
       in
-      if brick = make_empty_brick() then
-        cbgui.world_gui.(i).(j) <- (Canvas.create_rectangle ~outline:(`Color("#313131")) ~x1:x1 ~y1:y1 ~x2:x2 ~y2:y2 cbgui.canvas)
+
+      if brick = make_empty_brick () then
+        cbgui.world_gui.(i).(j) <- (
+          Canvas.create_rectangle
+            ~outline:(`Color("#313131"))
+            ~x1:x1
+            ~y1:y1
+            ~x2:x2
+            ~y2:y2
+            cbgui.canvas
+        )
       else
-        cbgui.world_gui.(i).(j) <- (Canvas.create_rectangle ~fill:(tkcolor) ~outline:`Yellow ~x1:x1 ~y1:y1 ~x2:x2 ~y2:y2 cbgui.canvas)
-      ;
+        cbgui.world_gui.(i).(j) <- (
+          Canvas.create_rectangle
+            ~fill:tkcolor
+            ~outline:`Yellow
+            ~x1:x1
+            ~y1:y1
+            ~x2:x2
+            ~y2:y2
+            cbgui.canvas
+        );
+
       cbgui.world_prev.(i).(j) <- brick
     end
   else
     ()
 ;;
 
-let cbg_delete_others(cbgui, l) =
-  (Canvas.delete (cbgui.canvas) l)
+let cbg_delete_others (cbgui, l) =
+  Canvas.delete cbgui.canvas l
 ;;
 
 let rec cbg_create_ball_gui(param,game,cbgui,bl) =
@@ -105,95 +126,144 @@ let rec cbg_create_ball_gui(param,game,cbgui,bl) =
     and x2 = x + (size) and y2 = y + (size)
     and cfill = (cbg_convert_color(ball_color(game,ball)))
     in
+
     (* let id = Canvas.create_rectangle ~x1:x1 ~y1:y1 ~x2:x2 ~y2:y2 ~fill:cfill ~outline:`White cbgui.canvas in *)
-    let id = Canvas.create_oval ~x1:x1 ~y1:y1 ~x2:x2 ~y2:y2 ~fill:cfill ~outline:`White cbgui.canvas in
-    id::(cbg_create_ball_gui(param,game,cbgui,sl))
+    let id = Canvas.create_oval
+      ~x1:x1
+      ~y1:y1
+      ~x2:x2
+      ~y2:y2
+      ~fill:cfill
+      ~outline:`White
+      cbgui.canvas
+    in
+
+    id :: cbg_create_ball_gui (param, game, cbgui, sl)
 ;;
 
-let rec cbg_ball_update(param,game, cbgui, balls, balls_gui : t_camlbrick_param * t_camlbrick * t_camlbrick_gui * t_ball list * tagOrId list) =
-  match (balls,balls_gui) with
+let rec cbg_ball_update (param, game, cbgui, balls, balls_gui : t_camlbrick_param * t_camlbrick * t_camlbrick_gui * t_ball list * tagOrId list) =
+  match (balls, balls_gui) with
   | ([],[]) -> []
-  | ([],l) -> cbg_delete_others(cbgui,l);[]
-  | (bl, []) -> cbg_create_ball_gui(param,game,cbgui,bl)
-  | (a::al, b::bl) ->
-    let size = ball_size_pixel(game, a) in
-    let x = ball_x(game, a) and y = ball_y(game, a) in
-    let x1 = x - (size) and y1 = y - (size)
-    and x2 = x + (size) and y2 = y + (size)
-    and cfill = (cbg_convert_color(ball_color(game,a)))
+  | ([],l) -> cbg_delete_others (cbgui, l) ; []
+  | (bl, []) -> cbg_create_ball_gui (param, game, cbgui, bl)
+  | (a :: al, b :: bl) ->
+    let size = ball_size_pixel (game, a) in
+    let x = ball_x (game, a) and y = ball_y (game, a) in
+    let x1 = x - size and y1 = y - size
+    and x2 = x + size and y2 = y + size
+    and cfill = cbg_convert_color (ball_color (game, a))
     in
-    (Canvas.coords_set (cbgui.canvas) b ~xys:[ (x1,y1) ; (x2,y2) ]);
-    (Canvas.configure_oval ~fill:cfill (cbgui.canvas) b);
-    b::(cbg_ball_update(param,game,cbgui,al,bl))
-  ;;
 
+    Canvas.coords_set (cbgui.canvas) b ~xys:[ (x1,y1) ; (x2,y2) ];
+    Canvas.configure_oval ~fill:cfill (cbgui.canvas) b;
+    b :: cbg_ball_update (param, game, cbgui, al, bl)
+;;
 
-    (* let id = (Canvas.create_oval ~fill:cfill ~outline:`White x1 y1 x2 y2 canvas) in *)
-
-
-
+(* let id = (Canvas.create_oval ~fill:cfill ~outline:`White x1 y1 x2 y2 canvas) in *)
 
 let rec cbg_animate_action param game cbgui () =
   Scale.set (cbgui.sc_speed) (float_of_int (speed_get(game)));
+
   let state = (string_of_gamestate(game)) in
   Textvariable.set (cbgui.lv_gamestate) state;
+
   let text1 = custom1_text() in
   Textvariable.set (cbgui.lb_custom1) text1;
+
   let text2 = custom2_text() in
   Textvariable.set (cbgui.lb_custom2) text2;
+
   (* on dessine les briques *)
-  for i=0 to Array.length(cbgui.world_gui) - 1
+  for i = 0 to Array.length cbgui.world_gui - 1
   do
-    for j=0 to Array.length(cbgui.world_gui.(i)) - 1
+    for j = 0 to Array.length cbgui.world_gui.(i) - 1
     do
-      cbg_brick_update(param,game,cbgui,i,j)
-    done
+      cbg_brick_update (param, game, cbgui, i, j)
+    done;
   done;
+
   (* on dessine la raquette *)
-  let paddle_dx = paddle_x(game) - cbgui.paddle_prevx in
-  (Canvas.move (cbgui.canvas) (cbgui.paddle_gui) ~x:(paddle_dx) ~y:0);
-  cbgui.paddle_prevx <- paddle_x(game);
+  let paddle_dx = paddle_x (game) - cbgui.paddle_prevx in
+  Canvas.move (cbgui.canvas) (cbgui.paddle_gui) ~x:(paddle_dx) ~y:0;
+  cbgui.paddle_prevx <- paddle_x game;
+
   (* on dessine les balles *)
-  let balls : t_ball list = balls_get(game) in
-  cbgui.balls_gui <- cbg_ball_update(param,game,cbgui, balls ,cbgui.balls_gui );
+  let balls : t_ball list = balls_get game in
+  cbgui.balls_gui <- cbg_ball_update (
+    param,
+    game,
+    cbgui,
+    balls,
+    cbgui.balls_gui
+  );
+
   (* on prepare la prochaine frame et on anime le jeu *);
   (* Printf.printf "Rearmement timer: %d\n%!" (param.time_speed.contents); *)
-  cbgui.tktimer <- Some(Timer.add ~ms:(param.time_speed.contents) ~callback:(cbg_animate_action param game cbgui));
-  animate_action(game)
+  cbgui.tktimer <- Some (
+    Timer.add
+      ~ms:(param.time_speed.contents)
+      ~callback:(cbg_animate_action param game cbgui)
+  );
+
+  animate_action game
 ;;
 
 let cbg_canvas_key_press game (event_info : Tk.eventInfo) =
   (* print_string ("Key: "^(event_info.ev_KeySymString)^" : ");
   print_endline("KeyCode: "^(string_of_int (event_info.ev_KeySymInt))); *)
-  canvas_keypressed(game, (event_info.ev_KeySymString),(event_info.ev_KeySymInt))
+  canvas_keypressed (
+    game,
+    event_info.ev_KeySymString,
+    event_info.ev_KeySymInt
+  )
 ;;
 
 let cbg_canvas_key_release game (event_info : Tk.eventInfo) =
   (* print_string ("Key: "^(event_info.ev_KeySymString)^" : ");
   print_endline("KeyCode: "^(string_of_int (event_info.ev_KeySymInt))); *)
-  canvas_keyreleased(game, (event_info.ev_KeySymString),(event_info.ev_KeySymInt))
-;;
 
+  canvas_keyreleased (
+    game,
+    event_info.ev_KeySymString,
+    event_info.ev_KeySymInt
+  )
+;;
 
 let cbg_canvas_mouse_move game (event_info : Tk.eventInfo) =
   (* Printf.printf "Mouse(%d ; %d)\n%!" (event_info.ev_MouseX) (event_info.ev_MouseY); *)
-  canvas_mouse_move(game, (event_info.ev_MouseX),(event_info.ev_MouseY));
+  canvas_mouse_move (
+    game,
+    event_info.ev_MouseX,
+    event_info.ev_MouseY
+  )
 ;;
 
 let cbg_canvas_mouse_click_press game (event_info : Tk.eventInfo) =
   (* Printf.printf "Mouse click press button=%d ; X:%d Y:%d Type:%d \n%!" (event_info.ev_ButtonNumber) (event_info.ev_MouseX) (event_info.ev_MouseY) (event_info.ev_Type); *)
-  canvas_mouse_click_press(game, (event_info.ev_ButtonNumber),(event_info.ev_MouseX),(event_info.ev_MouseY))
+  canvas_mouse_click_press (
+    game,
+    event_info.ev_ButtonNumber,
+    event_info.ev_MouseX,
+    event_info.ev_MouseY
+  )
 ;;
 
 let cbg_canvas_mouse_click_release game (event_info : Tk.eventInfo) =
   (* Printf.printf "Mouse click release button=%d ; X:%d Y:%d Type:%d \n%!" (event_info.ev_ButtonNumber) (event_info.ev_MouseX) (event_info.ev_MouseY) (event_info.ev_Type); *)
-  canvas_mouse_click_release(game, (event_info.ev_ButtonNumber),(event_info.ev_MouseX),(event_info.ev_MouseY))
+  canvas_mouse_click_release (
+    game,
+    event_info.ev_ButtonNumber,
+    event_info.ev_MouseX,
+    event_info.ev_MouseY
+  )
 ;;
 
-
-let make_camlbrick_gui(param,game : t_camlbrick_param *t_camlbrick) :  t_camlbrick_gui =
+let make_camlbrick_gui (
+  param, game : t_camlbrick_param * t_camlbrick
+) : t_camlbrick_gui =
   let top = openTk () in
-  Wm.title_set top "L1 CompProg - Camlbricks";
+
+  Wm.title_set top "CamlBrick";
 
   let c_WIN_WIDTH = param.world_width
   and c_WIN_BRICKS_HEIGHT = param.world_bricks_height
@@ -246,7 +316,7 @@ let make_camlbrick_gui(param,game : t_camlbrick_param *t_camlbrick) :  t_camlbri
   pack [coe f_option; coe b_startstop; coe lbl_gamestate; coe lb_gamestate; coe l_custom1;coe lb_custom1; coe l_custom2; coe lb_custom2] ~side:`Top;
   pack [coe f_game; coe f_menu] ~side:`Left;
 
-  let cbg_b_startstop_onclick game () : unit=
+  let cbg_b_startstop_onclick game () : unit =
     if (Textvariable.get bv_startstop) = "Start"
     then ( (Textvariable.set bv_startstop "Stop"); start_onclick(game))
     else ( (Textvariable.set bv_startstop "Start"); stop_onclick(game))
@@ -265,6 +335,7 @@ let make_camlbrick_gui(param,game : t_camlbrick_param *t_camlbrick) :  t_camlbri
   bind ~action:(cbg_canvas_mouse_move game) ~fields:[`MouseX; `MouseY] ~events:[`Motion] canvas;
   bind ~action:(cbg_canvas_mouse_click_press game) ~fields:[`ButtonNumber ; `MouseX; `MouseY; `Type ] ~events:[ `ButtonPress] canvas;
   bind ~action:(cbg_canvas_mouse_click_release game) ~fields:[`ButtonNumber ; `MouseX; `MouseY; `Type ] ~events:[`ButtonRelease ] canvas;
+
   {
     top = top;
     canvas = canvas;
@@ -285,10 +356,14 @@ let make_camlbrick_gui(param,game : t_camlbrick_param *t_camlbrick) :  t_camlbri
   }
 ;;
 
+let launch_camlbrick (param, game) =
+  let cbgui = make_camlbrick_gui (param, game) in
 
-let launch_camlbrick(param, game) =
-  let cbgui = make_camlbrick_gui(param,game) in
-  cbgui.tktimer <- Some(Timer.add ~ms:(param.time_speed.contents) ~callback:(cbg_animate_action param game cbgui));
+  cbgui.tktimer <- Some (
+    Timer.add
+      ~ms:(param.time_speed.contents)
+      ~callback:(cbg_animate_action param game cbgui)
+  );
   Printexc.print mainLoop ()
 ;;
 
