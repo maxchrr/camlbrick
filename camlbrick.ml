@@ -212,15 +212,40 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
   }
 ;;
 
-(** Ce type permet de définir les différents paramètre d'une ball
-    @author Axel De Les Champs--Vieira*)
-type t_ball  = {position : int * int ; vitesse : t_vec2 ; taille : t_ball_size}
+(**
+  Définition de la balle par sa posiiton, son vecteur vitesse et sa taille.
 
-(* Itération 2 *)
-type t_paddle = unit;;
+  D'un point de vue de l'affichage, une balle se représente par un cercle.
+*)
+type t_ball  =
+  {
+    position : int * int;
+    speed : t_vec2;
+    size : t_ball_size
+  }
+;;
 
-(* Itération 1, 2, 3 et 4 *)
-type t_camlbrick = {matrix : t_brick_kind array array; param_ball : t_ball list } ;;
+(**
+  Définition de la raquette par sa taille et sa position en mouvement sur l'axe X.
+*)
+type t_paddle =
+  {
+    position : (int ref) * int;
+    size : t_paddle_size
+  }
+;;
+
+(**
+  Représentation du jeu de manière fonctionnel, avec tout les composants affichés à l'écran.
+*)
+type t_camlbrick =
+  {
+    param: t_camlbrick_param;
+    matrix : t_brick_kind array array;
+    paddle : t_paddle;
+    ball : t_ball list
+  }
+;;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -250,34 +275,54 @@ let make_camlbrick_param () : t_camlbrick_param = {
   @return paramétrage actuel.
 *)
 let param_get (game : t_camlbrick) : t_camlbrick_param =
-  (* Itération 1 *)
-  make_camlbrick_param()
+  game.param
+;;
+
+(**
+  Création d'une raquette par défaut au milieu de l'écran et de taille normal.
+
+  @author Paul Ourliac
+  @deprecated Cette fonction est là juste pour le debug ou pour débuter certains traitements de test.
+*)
+let make_paddle () : t_paddle =
+  {
+    size = PS_MEDIUM;
+    position = (ref 0 ,0)
+  }
 ;;
 
 (**
   Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
 
+  @author Max Charrier
   @return partie correctement initialisé.
 *)
 let make_camlbrick() : t_camlbrick =
-  (* Itération 1, 2, 3 et 4 *)
-  [|[|BK_empty|]|]
-;;
+  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
 
+  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
 
-(**
-  Création d'une raquette par défaut au milieu de l'écran et de taille normal.
+  for x = 0 to Array.length map - 1 do
+    for y = 0 to Array.length map.(x) - 1 do
+      map.(x).(y) <- tab.(Random.int (Array.length tab))
+    done;
+  done;
 
-  @deprecated Cette fonction est là juste pour le debug ou pour débuter certains traitements de test.
-*)
-let make_paddle () : t_paddle =
-  (* Itération 2 *)
-  ()
+  {
+    param = make_camlbrick_param ();
+    matrix = map;
+    paddle = make_paddle ();
+    ball = []
+  }
 ;;
 
 let make_ball (x, y, size : int * int * int) : t_ball =
   (* Itération 3 *)
-  ()
+  {
+    position = (0, 0);
+    speed = make_vec2 (0, 0);
+    size = BS_MEDIUM
+  }
 ;;
 
 (**
@@ -294,152 +339,253 @@ let string_of_gamestate(game : t_camlbrick) : string =
   "INCONNU"
 ;;
 
-(** Renvoie le type de la brick en fonction ndes coordinee
-    @author Paul Ourliac*)
+(**
+  Renvoie le type de la brick en fonction des coordonnées.
+
+  @author Paul Ourliac
+*)
 let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
-  (* Itération 1 *)
-  game.(i).(j)
+  game.matrix.(i).(j)
 ;;
-(**Cette fonction retrace grace au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type precedemment
-    @author Axel De Les Champs--Vieira*)
+
+(**
+  Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
+
+  @author Axel De Les Champs--Vieira
+*)
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
-  let l_change = game.(i).(j) in
-    if l_change = (BK_bonus)
-        then game.(i).(j) <- BK_empty
-  else if l_change = (BK_simple)
-        then game.(i).(j) <- BK_empty
-  else if l_change = (BK_double)
-        then game.(i).(j) <- BK_simple
-  else  if l_change = (BK_block)
-        then game.(i).(j) <- BK_block
+  let brick : t_brick_kind = brick_get (game, i, j) in
+
+  if brick = BK_bonus then
+    game.matrix.(i).(j) <- BK_empty
+  else if brick = BK_simple then
+    game.matrix.(i).(j) <- BK_empty
+  else if brick = BK_double then
+    game.matrix.(i).(j) <- BK_simple
+  else if brick = BK_block then
+    game.matrix.(i).(j) <- BK_block
   else ()
 ;;
 
+(**
+  Renvoie la couleur de la bricque en fonction des coordonnées.
 
-(** Renvoie la couleur de la brick en fonction des coordonee
-    @author Paul Ourliac*)
+  @author Paul Ourliac
+*)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
-  (* Itération 1 *)
-  let l_type : t_brick_kind = game.(i).(j) in
-  if l_type = BK_empty
-  then BLACK
+  let brick : t_brick_kind = brick_get (game, i, j) in
+
+  if brick = BK_empty then
+    BLACK
+  else if brick = BK_simple then
+    GREEN
+  else if brick = BK_double then
+    RED
+  else if brick = BK_block then
+    ORANGE
   else
-    if l_type = BK_simple
-    then GREEN
-    else
-      if l_type = BK_double
-      then RED
-      else
-        if l_type = BK_block
-        then ORANGE
-        else BLUE
+    BLUE
 ;;
 
-let paddle_x (game : t_camlbrick) : int=
-  (* Itération 2 *)
-  0
+(**
+  Renvoie la position selon l'axe horizontale de la raquette.
+
+  @author Paul Ourliac
+*)
+let paddle_x (game : t_camlbrick) : int =
+  !(fst game.paddle.position)
 ;;
 
+(**
+  Renvoie la taille en pixel de la raquette
+
+  @author Paul Ourliac
+*)
 let paddle_size_pixel (game : t_camlbrick) : int =
-  (* Itération 2 *)
-  0
+  let param : t_camlbrick_param = param_get game in
+
+  if game.paddle.size = PS_SMALL then
+    param.paddle_init_width
+  else if game.paddle.size = PS_MEDIUM then
+    param.paddle_init_width * 2
+  else
+    param.paddle_init_width * 4
 ;;
 
+(**
+  Déplace la raquette vers la gauche.
+
+  @author Paul Ourliac
+*)
 let paddle_move_left (game : t_camlbrick) : unit =
-  (* Itération 2 *)
-  ()
+  if paddle_x (game) < 0 then
+    fst game.paddle.position := !(fst game.paddle.position) - 1
+  else
+    ()
 ;;
 
+(**
+  Déplace la raquette vers la droite.
+
+  @author Paul Ourliac
+*)
 let paddle_move_right (game : t_camlbrick) : unit =
-  (* Itération 2 *)
-  ()
-  ;;
-(**Cette fonction renvoie un booléen en fonction 
-  du nombre de ball en jeu.
-    @author Axel De Les Champs-Vieira*)
+  let l_param : t_camlbrick_param = param_get game in
+
+  if
+    (paddle_x game * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
+  then
+    fst game.paddle.position := !(fst game.paddle.position) + 1
+  else
+    ()
+;;
+
+(**
+  Indique si la partie en cours possèdes des balles.
+
+  @author Axel De Les Champs--Vieira
+*)
 let has_ball (game : t_camlbrick) : bool =
-  if game.param_ball = [] then
-    false
-else
-  true
+  game.ball = []
 ;;
 
-(**Cette fonction renvoie le nombre de ball en jeu. 
-    @author Axel De Les Champs--Vieira*)
+(**
+  Renvoie le nombre de balle présente dans une partie.
+
+  @author Axel De Les Champs--Vieira
+*)
 let balls_count (game : t_camlbrick) : int =
-  if game.param_ball = [] then 0
-  else game.param_ball = List.length
+  if game.ball = [] then
+    0
+  else
+    List.length game.ball
 ;;
 
-(**Cette fonction renvoie la liste du nombre de ball.
-    @author Axel De Les Champs--Vieira*)
+(**
+  Récupérer la liste de toutes les balles de la partie en cours.
+
+  @author Axel De Les Champs--Vieira
+*)
 let balls_get (game : t_camlbrick) : t_ball list =
-  game.param_ball 
+  game.ball
 ;;
 
-(**Cette fonction permet de trouver l'indice d'un int 
-    rentréer en paramètre.
-    @author Axel De Les Champs--Vieira*)
+(**
+  Récupère la i-ième balle d'une partie, i compris entre 0 et n, avec n le nombre de balles.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_get (game, i : t_camlbrick * int) : t_ball =
-  let fin_liste : t_ball list ref =
-    game.param_ball
-  in 
-  let compteur : int ref = ref 0 in
-    while compteur != i do
-      (fin_liste := List.tl(!fin_liste);
-      compteur := !compteur + 1)
-    done;
-    List.hd(!fin_liste)
-  ;;
-(**Renvoie les coordonner x (absicces de la ball)
-    @author Axel De Les Champs--Vieira*)
+  (*
+    Il s'agit d'une optimisation du code suivant :
+    {[
+      let eol : t_ball list ref = ref game.ball in
+      let incr : int ref = ref 0 in
+
+      while !incr != i do
+        eol := List.tl !eol;
+        incr := !incr + 1
+      done;
+
+      List.hd !eol
+    ]}
+  *)
+
+  List.nth game.ball i
+;;
+
+(**
+  Renvoie l'abscisse du centre d'une balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
-  let (x,_) = ball.position in
-  x
+  fst ball.position
 ;;
-(**Renvoie les coordonner y (ordonnées de la ball)
-    @author Axel De Les Champs--Vieira*)
+
+(**
+  Renvoie l'ordonnée du centre d'une balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
-  let (_,y) = ball.position in
-  y
+  snd ball.position
 ;;
-(**Renvoie le diamètre des 3 tailles de types de ball
-    @author Axel De Les Champs--Vieira*)
+
+(**
+  Indique le diamètre du cercle représentant la balle en fonction de sa taille.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
-  if ball.taille = BS_SMALL then
+  if ball.size = BS_SMALL then
     20
-  else if ball.taille = BS_MEDIUM then
+  else if ball.size = BS_MEDIUM then
     50
-  else if ball.taille = BS_BIG then
+  else
     80
 ;;
-(**Cette fonction permet de donner une couleur différentes pour chaque taille de balle
-    @author Axel De Les Champs--Vieira*)
+
+(**
+  Donne une couleur différentes pour chaque taille de balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
-  if game.param_ball = BS_SMALL then
-    t_camlbrick_color = LIME
-  else if game.param_ball = BS_MEDIUM
-    t_camlbrock_color = LIGHTGRAY
-  else if game.param_ball = BS_BIG
-    t_calmbrock_color = GREY
+  if ball.size = BS_SMALL then
+    LIME
+  else if ball.size = BS_MEDIUM then
+    LIGHTGRAY
+  else
+    GRAY
 ;;
 
+(**
+    Modifie la vitesse d'une balle par accumulation avec un vecteur.
+
+    On peut alors augmenter ou diminuer la vitesse de la balle.
+
+    TODO : coder la fonction
+
+    @author ...
+*)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
-  (* Itération 3 *)
   ()
 ;;
 
+(**
+    Modifie la vitesse d'une balle par multiplication avec un vecteur.
+
+    On peut alors augmenter ou diminuer la vitesse de la balle.
+
+    TODO : coder la fonction
+
+    @author ...
+*)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
-  (* Itération 3 *)
   ()
 ;;
 
+(**
+  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de raydon rad.
+
+  TODO : coder la fonction
+
+  @author ...
+*)
 let is_inside_circle (cx, cy, rad, x, y : int * int * int * int * int) : bool =
   (* Itération 3 *)
   false
 ;;
 
-let is_inside_quad(x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
+(**
+  Détecte si un point (x,y) se trouve à l'intérieur d'un rectangle formé.
+
+  TODO : coder la fonction
+
+  @author ...
+*)
+let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
   (* Itération 3 *)
   false
 ;;
