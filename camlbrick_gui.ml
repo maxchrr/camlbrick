@@ -324,11 +324,11 @@ let make_camlbrick_gui (
   let f_menu = Frame.create top in
 
   (* Bouton *)
+  let bv_startstop = Textvariable.create () in
   let b_startstop = Button.create
     ~textvariable:bv_startstop
     f_menu
   in
-  let bv_startstop = Textvariable.create () in
   Textvariable.set bv_startstop "Start";
 
   (* Gamestate *)
