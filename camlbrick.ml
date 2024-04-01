@@ -275,7 +275,7 @@ let make_camlbrick_param () : t_camlbrick_param = {
   @return paramétrage actuel.
 *)
 let param_get (game : t_camlbrick) : t_camlbrick_param =
-  game.param
+  make_camlbrick_param ()
 ;;
 
 (**
@@ -292,36 +292,30 @@ let make_paddle () : t_paddle =
 ;;
 
 (**
+  Création d'un balle par défaut.
+
+  @author Max Charrier
+*)
+let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
+  {
+    position = (x, y);
+    speed = make_vec2 (0, 0);
+    size = size
+  }
+;;
+
+(**
   Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
 
   @author Max Charrier
   @return partie correctement initialisé.
 *)
 let make_camlbrick() : t_camlbrick =
-  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
-
-  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
-
-  for x = 0 to Array.length map - 1 do
-    for y = 0 to Array.length map.(x) - 1 do
-      map.(x).(y) <- tab.(Random.int (Array.length tab))
-    done;
-  done;
-
   {
     param = make_camlbrick_param ();
-    matrix = map;
+    matrix = [| [| BK_empty |] |];
     paddle = make_paddle ();
-    ball = []
-  }
-;;
-
-let make_ball (x, y, size : int * int * int) : t_ball =
-  (* Itération 3 *)
-  {
-    position = (0, 0);
-    speed = make_vec2 (0, 0);
-    size = BS_MEDIUM
+    ball = [make_ball (0, 0, BS_MEDIUM)]
   }
 ;;
 
@@ -669,12 +663,43 @@ let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * i
   @param keyString nom de la touche appuyée
   @param keyCode code entier de la touche appuyée
 *)
-let canvas_keypressed (game, keyString, keyCode : t_camlbrick * string * int) : unit =
+let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) : unit =
+  (*
   print_string "Key pressed: ";
-  print_string keyString;
+  print_string key_string;
   print_string " code=";
-  print_int keyCode;
+  print_int key_code;
   print_newline ()
+  *)
+  (*
+  Key pressed: z code=122
+  Key released: z code=122
+  Key pressed: q code=113
+  Key released: q code=113
+  Key pressed: s code=115
+  Key released: s code=115
+  Key pressed: d code=100
+  Key released: d code=100
+  Key pressed: Up code=65362
+  Key released: Up code=65362
+  Key pressed: Left code=65361
+  Key released: Left code=65361
+  Key pressed: Down code=65364
+  Key released: Down code=65364
+  Key pressed: Right code=65363
+  Key released: Right code=65363
+  *)
+  let left_key_code : int = 65361 in
+  let q_key_code : int = 113 in
+  let right_key_code : int = 65363 in
+  let d_right_code : int = 100 in
+
+  if key_code = left_key_code || key_code = q_key_code then
+    paddle_move_left game
+  else if key_code = right_key_code || key_code = d_right_code then
+    paddle_move_right game
+  else
+    ()
 ;;
 
 (**
@@ -689,11 +714,11 @@ let canvas_keypressed (game, keyString, keyCode : t_camlbrick * string * int) : 
   @param keyString nom de la touche relachée
   @param keyCode code entier de la touche relachée
 *)
-let canvas_keyreleased (game, keyString, keyCode : t_camlbrick * string * int) =
+let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) =
   print_string "Key released: ";
-  print_string keyString;
+  print_string key_string;
   print_string " code=";
-  print_int keyCode;
+  print_int key_code;
   print_newline ()
 ;;
 
