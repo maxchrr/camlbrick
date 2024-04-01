@@ -313,7 +313,7 @@ let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
 let make_camlbrick () : t_camlbrick =
   {
     param = make_camlbrick_param ();
-    matrix = [| [| BK_empty |] |];
+    matrix = Array.make_matrix 20 31 (make_empty_brick ());
     paddle = make_paddle ();
     ball = [make_ball (0, 0, BS_MEDIUM)]
   }

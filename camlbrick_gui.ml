@@ -271,6 +271,7 @@ let make_camlbrick_gui (
 
   Wm.title_set top "CamlBrick";
 
+  (* Variables *)
   let c_WIN_HEIGHT = param.world_bricks_height + param.world_empty_height
   and c_WIN_WIDTH = param.world_width
   and c_WIN_BRICKS_HEIGHT = param.world_bricks_height
@@ -290,18 +291,25 @@ let make_camlbrick_gui (
   and dy = c_WIN_BRICKS_HEIGHT / c_BRICK_HEIGHT
   in
 
+  (* Frame *)
   let f_game = Frame.create
     ~relief:`Raised
     ~borderwidth:2
     top
   in
+
+  (* Canvas : zone de jeu *)
   let canvas = Canvas.create
-    ~takefocus:true
-    ~width:c_WIN_WIDTH
     ~height:(c_WIN_BRICKS_HEIGHT + c_WIN_EMPTY_HEIGHT)
+    ~width:c_WIN_WIDTH
     ~background:`Black
+    ~takefocus:true
     f_game
   in
+  let world_gui = Array.make_matrix dx dy (`Id(-1)) in
+  let world_prev = Array.make_matrix dx dy (make_empty_brick ()) in
+
+  (* Paddle *)
   let paddle_gui = Canvas.create_rectangle
     ~fill:`Red
     ~outline:`Green
@@ -311,15 +319,39 @@ let make_camlbrick_gui (
     ~y2:c_PAD_Y2
     canvas
   in
-  let world_gui = Array.make_matrix dx dy (`Id(-1)) in
-  let world_prev = Array.make_matrix dx dy (make_empty_brick ()) in
 
+  (* Menu latéral *)
   let f_menu = Frame.create top in
+
+  (* Bouton *)
+  let b_startstop = Button.create
+    ~textvariable:bv_startstop
+    f_menu
+  in
+  let bv_startstop = Textvariable.create () in
+  Textvariable.set bv_startstop "Start";
+
+  (* Gamestate *)
   let lbl_gamestate= Label.create
-    ~text:"Gamestate:"
+    ~text:"Statut du jeu :"
     f_menu
   in
   let lv_gamestate = Textvariable.create () in
+  Textvariable.set lv_gamestate "Game Over";
+  let lb_gamestate = Label.create
+    ~textvariable:lv_gamestate
+    f_menu
+  in
+
+  (* Custom *)
+  let l_custom1 = Label.create
+    ~text:"Custom1:"
+    f_menu
+  in
+  let l_custom2 = Label.create
+    ~text:"Custom2:"
+    f_menu
+  in
   let tv_custom1 = Textvariable.create () in
   let tv_custom2 = Textvariable.create () in
   let lb_custom1 = Label.create
@@ -330,47 +362,30 @@ let make_camlbrick_gui (
     ~textvariable:tv_custom2
     f_menu
   in
-  let l_custom1 = Label.create
-    ~text:"Custom1:"
-    f_menu
-  in
-  let l_custom2 = Label.create
-    ~text:"Custom2:"
-    f_menu
-  in
 
-  let bv_startstop = Textvariable.create () in
-  let lb_gamestate = Label.create
-    ~textvariable:lv_gamestate
-    f_menu
-  in
-
+  (* Highscore *)
   let b_hof = Button.create
     ~text:"Highscores"
     f_menu
   in
-  let b_startstop = Button.create
-    ~textvariable:bv_startstop
-    f_menu
-  in
 
+  (* Options *)
   let f_option = Frame.create
     ~relief:`Groove
     ~borderwidth:2
     f_menu
   in
   let l_option = Label.create
-    ~text:"Options:"
+    ~text:"Options :"
     f_option
   in
-
   (* let mylist = Listbox.create ~selectmode:`Single f_option in  *)
   let sc_speed = Scale.create
     ~min:5.
     ~max:100.
     ~resolution:5.
     ~tickinterval:50.
-    ~label:"Speed:"
+    ~label:"Vitesse :"
     ~orient:`Horizontal
     f_option
   in
@@ -378,8 +393,6 @@ let make_camlbrick_gui (
     sc_speed
     (float_of_int (speed_get (game)))
   ;
-  Textvariable.set lv_gamestate "Game Over";
-  Textvariable.set bv_startstop "Start";
 
   pack [coe l_option];
   pack ~fill:`X [coe sc_speed];
@@ -413,7 +426,7 @@ let make_camlbrick_gui (
   in
   let cbg_b_hof_onclick game () = () in
   let cbg_speed_change game xspeed =
-    speed_change(game, (int_of_float xspeed))
+    speed_change (game, (int_of_float xspeed))
   in
 
   Button.configure
