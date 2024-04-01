@@ -116,16 +116,15 @@ let cbg_delete_others (cbgui, l) =
   Canvas.delete cbgui.canvas l
 ;;
 
-let rec cbg_create_ball_gui(param,game,cbgui,bl) =
+let rec cbg_create_ball_gui (param, game, cbgui, bl) =
   match bl with
   | [] -> []
-  | ball::sl ->
-    let size = ball_size_pixel(game,ball) in
-    let x = ball_x(game,ball) and y = ball_y(game,ball) in
-    let x1 = x - (size) and y1 = y - (size)
-    and x2 = x + (size) and y2 = y + (size)
-    and cfill = (cbg_convert_color(ball_color(game,ball)))
-    in
+  | ball :: sl ->
+    let size = ball_size_pixel (game, ball) in
+    let x = ball_x (game, ball) and y = ball_y (game, ball) in
+    let x1 = x - size and y1 = y - size
+    and x2 = x + size and y2 = y + size in
+    let cfill = cbg_convert_color (ball_color (game, ball)) in
 
     (* let id = Canvas.create_rectangle ~x1:x1 ~y1:y1 ~x2:x2 ~y2:y2 ~fill:cfill ~outline:`White cbgui.canvas in *)
     let id = Canvas.create_oval
@@ -144,18 +143,26 @@ let rec cbg_create_ball_gui(param,game,cbgui,bl) =
 let rec cbg_ball_update (param, game, cbgui, balls, balls_gui : t_camlbrick_param * t_camlbrick * t_camlbrick_gui * t_ball list * tagOrId list) =
   match (balls, balls_gui) with
   | ([],[]) -> []
-  | ([],l) -> cbg_delete_others (cbgui, l) ; []
+  | ([], l) -> cbg_delete_others (cbgui, l) ; []
   | (bl, []) -> cbg_create_ball_gui (param, game, cbgui, bl)
   | (a :: al, b :: bl) ->
     let size = ball_size_pixel (game, a) in
     let x = ball_x (game, a) and y = ball_y (game, a) in
     let x1 = x - size and y1 = y - size
-    and x2 = x + size and y2 = y + size
-    and cfill = cbg_convert_color (ball_color (game, a))
-    in
+    and x2 = x + size and y2 = y + size in
+    let cfill = cbg_convert_color (ball_color (game, a)) in
 
-    Canvas.coords_set (cbgui.canvas) b ~xys:[ (x1,y1) ; (x2,y2) ];
-    Canvas.configure_oval ~fill:cfill (cbgui.canvas) b;
+    Canvas.coords_set
+      cbgui.canvas
+      b
+      ~xys:[ (x1,y1) ; (x2,y2) ]
+    ;
+    Canvas.configure_oval
+      ~fill:cfill
+      cbgui.canvas
+      b
+    ;
+
     b :: cbg_ball_update (param, game, cbgui, al, bl)
 ;;
 
@@ -164,14 +171,14 @@ let rec cbg_ball_update (param, game, cbgui, balls, balls_gui : t_camlbrick_para
 let rec cbg_animate_action param game cbgui () =
   Scale.set (cbgui.sc_speed) (float_of_int (speed_get(game)));
 
-  let state = (string_of_gamestate(game)) in
-  Textvariable.set (cbgui.lv_gamestate) state;
+  let state = string_of_gamestate game in
+  Textvariable.set cbgui.lv_gamestate state;
 
-  let text1 = custom1_text() in
-  Textvariable.set (cbgui.lb_custom1) text1;
+  let text1 = custom1_text () in
+  Textvariable.set cbgui.lb_custom1 text1;
 
-  let text2 = custom2_text() in
-  Textvariable.set (cbgui.lb_custom2) text2;
+  let text2 = custom2_text () in
+  Textvariable.set cbgui.lb_custom2 text2;
 
   (* on dessine les briques *)
   for i = 0 to Array.length cbgui.world_gui - 1
@@ -321,12 +328,11 @@ let make_camlbrick_gui (
     then ( (Textvariable.set bv_startstop "Stop"); start_onclick(game))
     else ( (Textvariable.set bv_startstop "Start"); stop_onclick(game))
   in
-  let cbg_b_hof_onclick game () =
-    ()
-  in
+  let cbg_b_hof_onclick game () = () in
   let cbg_speed_change game (xspeed) =
     speed_change(game, (int_of_float xspeed))
   in
+
   Button.configure ~command:(cbg_b_hof_onclick game) b_hof;
   Button.configure ~command:(cbg_b_startstop_onclick game) b_startstop;
   Scale.configure ~command:(cbg_speed_change game) sc_speed;

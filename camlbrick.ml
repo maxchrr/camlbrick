@@ -310,7 +310,7 @@ let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
   @author Max Charrier
   @return partie correctement initialisé.
 *)
-let make_camlbrick() : t_camlbrick =
+let make_camlbrick () : t_camlbrick =
   {
     param = make_camlbrick_param ();
     matrix = [| [| BK_empty |] |];
@@ -328,7 +328,7 @@ let make_camlbrick() : t_camlbrick =
   @param game la partie en cours d'exécution.
   @return chaîne de caractère représentant l'état de la partie.
 *)
-let string_of_gamestate(game : t_camlbrick) : string =
+let string_of_gamestate (game : t_camlbrick) : string =
   (* Itération 1,2,3 et 4 *)
   "INCONNU"
 ;;
@@ -515,7 +515,7 @@ let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
   if ball.size = BS_SMALL then
     20
   else if ball.size = BS_MEDIUM then
-    50
+    40
   else
     80
 ;;
