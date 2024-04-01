@@ -212,22 +212,40 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
   }
 ;;
 
-(* Itération 2 *)
-type t_ball = unit;;
+(**
+  Définition de la balle par sa posiiton, son vecteur vitesse et sa taille.
+
+  D'un point de vue de l'affichage, une balle se représente par un cercle.
+*)
+type t_ball  =
+  {
+    position : int * int;
+    speed : t_vec2;
+    size : t_ball_size
+  }
+;;
 
 (**
   Définition de la raquette par sa taille et sa position en mouvement sur l'axe X.
 *)
-type t_paddle = { size : t_paddle_size ; position : (int ref) * int };;
+type t_paddle =
+  {
+    position : (int ref) * int;
+    size : t_paddle_size
+  }
+;;
 
 (**
   Représentation du jeu de manière fonctionnel, avec tout les composants affichés à l'écran.
 *)
-type t_camlbrick = {
-  param: t_camlbrick_param;
-  matrix : t_brick_kind array array;
-  paddle : t_paddle
-};;
+type t_camlbrick =
+  {
+    param: t_camlbrick_param;
+    matrix : t_brick_kind array array;
+    paddle : t_paddle;
+    ball : t_ball list
+  }
+;;
 
 (**
   Paramètres du casse-brique via des informations personnalisables selon les contraintes du sujet.
@@ -267,7 +285,10 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
   @deprecated Cette fonction est là juste pour le debug ou pour débuter certains traitements de test.
 *)
 let make_paddle () : t_paddle =
-  {size = PS_MEDIUM; position = (ref 0 ,0)}
+  {
+    size = PS_MEDIUM;
+    position = (ref 0 ,0)
+  }
 ;;
 
 (**
@@ -290,13 +311,18 @@ let make_camlbrick() : t_camlbrick =
   {
     param = make_camlbrick_param ();
     matrix = map;
-    paddle = make_paddle ()
+    paddle = make_paddle ();
+    ball = []
   }
 ;;
 
 let make_ball (x, y, size : int * int * int) : t_ball =
   (* Itération 3 *)
-  ()
+  {
+    position = (0, 0);
+    speed = make_vec2 (0, 0);
+    size = BS_MEDIUM
+  }
 ;;
 
 (**
@@ -314,7 +340,7 @@ let string_of_gamestate(game : t_camlbrick) : string =
 ;;
 
 (**
-  Renvoie le type de la brick en fonction ndes coordinee
+  Renvoie le type de la brick en fonction des coordonnées.
 
   @author Paul Ourliac
 *)
@@ -324,18 +350,19 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
 
 (**
   Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
+
   @author Axel De Les Champs--Vieira
 *)
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
-  let l_change = brick_get(game,i,j) in
+  let brick : t_brick_kind = brick_get (game, i, j) in
 
-  if l_change = (BK_bonus) then
+  if brick = BK_bonus then
     game.matrix.(i).(j) <- BK_empty
-  else if l_change = (BK_simple) then
+  else if brick = BK_simple then
     game.matrix.(i).(j) <- BK_empty
-  else if l_change = (BK_double) then
+  else if brick = BK_double then
     game.matrix.(i).(j) <- BK_simple
-  else if l_change = (BK_block) then
+  else if brick = BK_block then
     game.matrix.(i).(j) <- BK_block
   else ()
 ;;
@@ -346,29 +373,27 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   @author Paul Ourliac
 *)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
-  let l_type : t_brick_kind = brick_get(game,i,j) in
+  let brick : t_brick_kind = brick_get (game, i, j) in
 
-  if l_type = BK_empty then
+  if brick = BK_empty then
     BLACK
-  else if l_type = BK_simple then
+  else if brick = BK_simple then
     GREEN
-  else if l_type = BK_double then
+  else if brick = BK_double then
     RED
-  else if l_type = BK_block then
+  else if brick = BK_block then
     ORANGE
   else
     BLUE
 ;;
 
 (**
-  Renvoie la position selon l'axe x de la raquette
+  Renvoie la position selon l'axe horizontale de la raquette.
 
   @author Paul Ourliac
 *)
-let paddle_x (game : t_camlbrick) : int=
-  let (l_x,_) : int ref * int = game.paddle.position in
-
-  !l_x
+let paddle_x (game : t_camlbrick) : int =
+  !(fst game.paddle.position)
 ;;
 
 (**
@@ -377,18 +402,18 @@ let paddle_x (game : t_camlbrick) : int=
   @author Paul Ourliac
 *)
 let paddle_size_pixel (game : t_camlbrick) : int =
-  let l_param : t_camlbrick_param = param_get game in
+  let param : t_camlbrick_param = param_get game in
 
-  if game.paddle.size = PS_MEDIUM then
-    l_param.paddle_init_width
-  else if game.paddle.size = PS_BIG then
-    l_param.paddle_init_width * 2
+  if game.paddle.size = PS_SMALL then
+    param.paddle_init_width
+  else if game.paddle.size = PS_MEDIUM then
+    param.paddle_init_width * 2
   else
-    l_param.paddle_init_width / 2
+    param.paddle_init_width * 4
 ;;
 
 (**
-  Déplace la raquette vers la gauche
+  Déplace la raquette vers la gauche.
 
   @author Paul Ourliac
 *)
@@ -400,7 +425,7 @@ let paddle_move_left (game : t_camlbrick) : unit =
 ;;
 
 (**
-  Déplace la raquette vers la droite
+  Déplace la raquette vers la droite.
 
   @author Paul Ourliac
 *)
@@ -415,62 +440,152 @@ let paddle_move_right (game : t_camlbrick) : unit =
     ()
 ;;
 
+(**
+  Indique si la partie en cours possèdes des balles.
+
+  @author Axel De Les Champs--Vieira
+*)
 let has_ball (game : t_camlbrick) : bool =
-  (* Itération 2 *)
-  false
+  game.ball = []
 ;;
 
+(**
+  Renvoie le nombre de balle présente dans une partie.
+
+  @author Axel De Les Champs--Vieira
+*)
 let balls_count (game : t_camlbrick) : int =
-  (* Itération 2 *)
-  0
+  if game.ball = [] then
+    0
+  else
+    List.length game.ball
 ;;
 
+(**
+  Récupérer la liste de toutes les balles de la partie en cours.
+
+  @author Axel De Les Champs--Vieira
+*)
 let balls_get (game : t_camlbrick) : t_ball list =
-  (* Itération 2 *)
-  []
+  game.ball
 ;;
 
+(**
+  Récupère la i-ième balle d'une partie, i compris entre 0 et n, avec n le nombre de balles.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_get (game, i : t_camlbrick * int) : t_ball =
-  (* Itération 2 *)
-  ()
+  (*
+    Il s'agit d'une optimisation du code suivant :
+    {[
+      let eol : t_ball list ref = ref game.ball in
+      let incr : int ref = ref 0 in
+
+      while !incr != i do
+        eol := List.tl !eol;
+        incr := !incr + 1
+      done;
+
+      List.hd !eol
+    ]}
+  *)
+
+  List.nth game.ball i
 ;;
 
+(**
+  Renvoie l'abscisse du centre d'une balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  fst ball.position
 ;;
 
+(**
+  Renvoie l'ordonnée du centre d'une balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  snd ball.position
 ;;
 
+(**
+  Indique le diamètre du cercle représentant la balle en fonction de sa taille.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
-  (* Itération 2 *)
-  0
+  if ball.size = BS_SMALL then
+    20
+  else if ball.size = BS_MEDIUM then
+    50
+  else
+    80
 ;;
 
+(**
+  Donne une couleur différentes pour chaque taille de balle.
+
+  @author Axel De Les Champs--Vieira
+*)
 let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
-  (* Itération 2 *)
-  GRAY
+  if ball.size = BS_SMALL then
+    LIME
+  else if ball.size = BS_MEDIUM then
+    LIGHTGRAY
+  else
+    GRAY
 ;;
 
+(**
+    Modifie la vitesse d'une balle par accumulation avec un vecteur.
+
+    On peut alors augmenter ou diminuer la vitesse de la balle.
+
+    TODO : coder la fonction
+
+    @author ...
+*)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
-  (* Itération 3 *)
   ()
 ;;
 
+(**
+    Modifie la vitesse d'une balle par multiplication avec un vecteur.
+
+    On peut alors augmenter ou diminuer la vitesse de la balle.
+
+    TODO : coder la fonction
+
+    @author ...
+*)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
-  (* Itération 3 *)
   ()
 ;;
 
+(**
+  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de raydon rad.
+
+  TODO : coder la fonction
+
+  @author ...
+*)
 let is_inside_circle (cx, cy, rad, x, y : int * int * int * int * int) : bool =
   (* Itération 3 *)
   false
 ;;
 
-let is_inside_quad(x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
+(**
+  Détecte si un point (x,y) se trouve à l'intérieur d'un rectangle formé.
+
+  TODO : coder la fonction
+
+  @author ...
+*)
+let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
   (* Itération 3 *)
   false
 ;;
