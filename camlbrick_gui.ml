@@ -45,7 +45,7 @@ type t_camlbrick_gui = {
   lb_custom2 : Textvariable.textVariable;
 }
 
-let cbg_convert_color(color) =
+let cbg_convert_color (color) =
   match color with
   | WHITE -> `White
   | BLACK -> `Black
@@ -63,7 +63,6 @@ let cbg_convert_color(color) =
   | DARKGRAY -> `Color("#616161")
 ;;
 
-
 let cbg_brick_update (param, game, cbgui, i, j) =
   let brick = brick_get (game, i, j) in
   let brick_gui = cbgui.world_gui.(i).(j) in
@@ -73,8 +72,8 @@ let cbg_brick_update (param, game, cbgui, i, j) =
     begin
       Canvas.delete (cbgui.canvas) [brick_gui];
 
-      let color = brick_color(game, i,j) in
-      let tkcolor = cbg_convert_color(color) in
+      let color = brick_color (game, i,j) in
+      let tkcolor = cbg_convert_color (color) in
       let c_BRICK_WIDTH = param.brick_width
       and c_BRICK_HEIGHT= param.brick_height
       in
@@ -272,75 +271,194 @@ let make_camlbrick_gui (
 
   Wm.title_set top "CamlBrick";
 
-  let c_WIN_WIDTH = param.world_width
+  let c_WIN_HEIGHT = param.world_bricks_height + param.world_empty_height
+  and c_WIN_WIDTH = param.world_width
   and c_WIN_BRICKS_HEIGHT = param.world_bricks_height
   and c_WIN_EMPTY_HEIGHT= param.world_empty_height
-  and c_WIN_HEIGHT =  param.world_bricks_height + param.world_empty_height
-  and c_BRICK_WIDTH = param.brick_width
+  in
+  let c_BRICK_WIDTH = param.brick_width
   and c_BRICK_HEIGHT= param.brick_height
   and c_PAD_INIT_WIDTH = param.paddle_init_width
-  and c_PAD_INIT_HEIGHT = param.paddle_init_height in
+  and c_PAD_INIT_HEIGHT = param.paddle_init_height
+  in
   let c_PAD_X1 = (c_WIN_WIDTH - c_PAD_INIT_WIDTH) / 2
   and c_PAD_X2 = (c_WIN_WIDTH + c_PAD_INIT_WIDTH) / 2
   and c_PAD_Y1 = (c_WIN_HEIGHT - c_PAD_INIT_HEIGHT - 10)
   and c_PAD_Y2 = (c_WIN_HEIGHT - 10)
-  and dx = c_WIN_WIDTH / c_BRICK_WIDTH
+  in
+  let dx = c_WIN_WIDTH / c_BRICK_WIDTH
   and dy = c_WIN_BRICKS_HEIGHT / c_BRICK_HEIGHT
   in
 
-  let f_game = Frame.create ~relief:`Raised ~borderwidth:2 top in
-  let canvas = Canvas.create ~takefocus:true ~width:c_WIN_WIDTH ~height:(c_WIN_BRICKS_HEIGHT + c_WIN_EMPTY_HEIGHT) ~background:`Black f_game in
-  let paddle_gui = (Canvas.create_rectangle ~fill:`Red ~outline:`Green ~x1:c_PAD_X1 ~y1:c_PAD_Y1 ~x2:c_PAD_X2 ~y2:c_PAD_Y2
- canvas) in
+  let f_game = Frame.create
+    ~relief:`Raised
+    ~borderwidth:2
+    top
+  in
+  let canvas = Canvas.create
+    ~takefocus:true
+    ~width:c_WIN_WIDTH
+    ~height:(c_WIN_BRICKS_HEIGHT + c_WIN_EMPTY_HEIGHT)
+    ~background:`Black
+    f_game
+  in
+  let paddle_gui = Canvas.create_rectangle
+    ~fill:`Red
+    ~outline:`Green
+    ~x1:c_PAD_X1
+    ~y1:c_PAD_Y1
+    ~x2:c_PAD_X2
+    ~y2:c_PAD_Y2
+    canvas
+  in
   let world_gui = Array.make_matrix dx dy (`Id(-1)) in
-  let world_prev = Array.make_matrix dx dy (make_empty_brick()) in
+  let world_prev = Array.make_matrix dx dy (make_empty_brick ()) in
 
   let f_menu = Frame.create top in
-  let lbl_gamestate= Label.create ~text:"Gamestate:" f_menu in
-  let lv_gamestate = Textvariable.create ()  in
-  let tv_custom1 = Textvariable.create() in
-  let tv_custom2 = Textvariable.create() in
-  let lb_custom1 = Label.create ~textvariable:tv_custom1 f_menu in
-  let lb_custom2 = Label.create ~textvariable:tv_custom2 f_menu in
-  let l_custom1 = Label.create ~text:"Custom1:" f_menu in
-  let l_custom2 = Label.create ~text:"Custom2:" f_menu in
+  let lbl_gamestate= Label.create
+    ~text:"Gamestate:"
+    f_menu
+  in
+  let lv_gamestate = Textvariable.create () in
+  let tv_custom1 = Textvariable.create () in
+  let tv_custom2 = Textvariable.create () in
+  let lb_custom1 = Label.create
+    ~textvariable:tv_custom1
+    f_menu
+  in
+  let lb_custom2 = Label.create
+    ~textvariable:tv_custom2
+    f_menu
+  in
+  let l_custom1 = Label.create
+    ~text:"Custom1:"
+    f_menu
+  in
+  let l_custom2 = Label.create
+    ~text:"Custom2:"
+    f_menu
+  in
 
   let bv_startstop = Textvariable.create () in
-  let lb_gamestate = Label.create ~textvariable:lv_gamestate f_menu  in
-  let b_hof = Button.create ~text:"Highscores"  f_menu in
-  let b_startstop = Button.create ~textvariable:bv_startstop  f_menu in
-  let f_option = Frame.create ~relief:`Groove ~borderwidth:2 f_menu in
-  let l_option = Label.create ~text:"Options:" f_option in
+  let lb_gamestate = Label.create
+    ~textvariable:lv_gamestate
+    f_menu
+  in
+
+  let b_hof = Button.create
+    ~text:"Highscores"
+    f_menu
+  in
+  let b_startstop = Button.create
+    ~textvariable:bv_startstop
+    f_menu
+  in
+
+  let f_option = Frame.create
+    ~relief:`Groove
+    ~borderwidth:2
+    f_menu
+  in
+  let l_option = Label.create
+    ~text:"Options:"
+    f_option
+  in
+
   (* let mylist = Listbox.create ~selectmode:`Single f_option in  *)
-  let sc_speed = Scale.create ~min:5. ~max:100. ~resolution:5. ~tickinterval:50. ~label:"Speed:" ~orient:`Horizontal f_option in
-  Scale.set sc_speed (float_of_int (speed_get(game)));
+  let sc_speed = Scale.create
+    ~min:5.
+    ~max:100.
+    ~resolution:5.
+    ~tickinterval:50.
+    ~label:"Speed:"
+    ~orient:`Horizontal
+    f_option
+  in
+  Scale.set
+    sc_speed
+    (float_of_int (speed_get (game)))
+  ;
   Textvariable.set lv_gamestate "Game Over";
   Textvariable.set bv_startstop "Start";
 
-  pack  [coe l_option];
-  pack ~fill:`X [ coe sc_speed];
-  pack [coe canvas] ;
-  pack [coe f_option; coe b_startstop; coe lbl_gamestate; coe lb_gamestate; coe l_custom1;coe lb_custom1; coe l_custom2; coe lb_custom2] ~side:`Top;
+  pack [coe l_option];
+  pack ~fill:`X [coe sc_speed];
+  pack [coe canvas];
+  pack
+    [
+      coe f_option;
+      coe b_startstop;
+      coe lbl_gamestate;
+      coe lb_gamestate;
+      coe l_custom1;
+      coe lb_custom1;
+      coe l_custom2;
+      coe lb_custom2
+    ]
+    ~side:`Top
+  ;
   pack [coe f_game; coe f_menu] ~side:`Left;
 
   let cbg_b_startstop_onclick game () : unit =
-    if (Textvariable.get bv_startstop) = "Start"
-    then ( (Textvariable.set bv_startstop "Stop"); start_onclick(game))
-    else ( (Textvariable.set bv_startstop "Start"); stop_onclick(game))
+    if (Textvariable.get bv_startstop) = "Start" then
+      begin
+        Textvariable.set bv_startstop "Stop";
+        start_onclick game;
+      end
+    else
+      begin
+        Textvariable.set bv_startstop "Start";
+        stop_onclick game
+      end
   in
   let cbg_b_hof_onclick game () = () in
-  let cbg_speed_change game (xspeed) =
+  let cbg_speed_change game xspeed =
     speed_change(game, (int_of_float xspeed))
   in
 
-  Button.configure ~command:(cbg_b_hof_onclick game) b_hof;
-  Button.configure ~command:(cbg_b_startstop_onclick game) b_startstop;
-  Scale.configure ~command:(cbg_speed_change game) sc_speed;
-  bind ~action:(cbg_canvas_key_press game) ~fields:[`KeySymString ; `KeySymInt] ~events:[`KeyPress] top;
-  bind ~action:(cbg_canvas_key_release game) ~fields:[`KeySymString ; `KeySymInt] ~events:[`KeyRelease] top;
-  bind ~action:(cbg_canvas_mouse_move game) ~fields:[`MouseX; `MouseY] ~events:[`Motion] canvas;
-  bind ~action:(cbg_canvas_mouse_click_press game) ~fields:[`ButtonNumber ; `MouseX; `MouseY; `Type ] ~events:[ `ButtonPress] canvas;
-  bind ~action:(cbg_canvas_mouse_click_release game) ~fields:[`ButtonNumber ; `MouseX; `MouseY; `Type ] ~events:[`ButtonRelease ] canvas;
+  Button.configure
+    ~command:(cbg_b_hof_onclick game)
+    b_hof
+  ;
+  Button.configure
+    ~command:(cbg_b_startstop_onclick game)
+    b_startstop
+  ;
+  Scale.configure
+    ~command:(cbg_speed_change game)
+    sc_speed
+  ;
+
+  bind
+    ~action:(cbg_canvas_key_press game)
+    ~fields:[`KeySymString ; `KeySymInt]
+    ~events:[`KeyPress]
+    top
+  ;
+  bind
+    ~action:(cbg_canvas_key_release game)
+    ~fields:[`KeySymString ; `KeySymInt]
+    ~events:[`KeyRelease]
+    top
+  ;
+  bind
+    ~action:(cbg_canvas_mouse_move game)
+    ~fields:[`MouseX ; `MouseY]
+    ~events:[`Motion]
+    canvas
+  ;
+  bind
+    ~action:(cbg_canvas_mouse_click_press game)
+    ~fields:[`ButtonNumber ; `MouseX ; `MouseY ; `Type]
+    ~events:[`ButtonPress]
+    canvas
+  ;
+  bind
+    ~action:(cbg_canvas_mouse_click_release game)
+    ~fields:[`ButtonNumber ; `MouseX ; `MouseY ; `Type]
+    ~events:[`ButtonRelease]
+    canvas
+  ;
 
   {
     top = top;
@@ -370,6 +488,7 @@ let launch_camlbrick (param, game) =
       ~ms:(param.time_speed.contents)
       ~callback:(cbg_animate_action param game cbgui)
   );
+
   Printexc.print mainLoop ()
 ;;
 
