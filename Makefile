@@ -11,8 +11,10 @@ else
 	LABLTK_DIR = +labltk
 endif
 
+all: camlbrick
+
 # Cible de build
-build: $(OBJ)
+camlbrick: $(OBJ)
 	mkdir -p bin
 	$(CAMLC) -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma $^
 
