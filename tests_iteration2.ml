@@ -4,54 +4,66 @@
 open CPtest;;
 open Camlbrick;;
 
-let paddle : t_paddle = {size = PS_BIG; position = (ref 10, 3)};;
+let canvas_height : int = 20;;
+let canvas_width : int = 31;;
 
-let camlbrick : t_camlbrick = {
-  param = {
-    world_width = 800;
-    world_bricks_height = 600;
-    world_empty_height = 200;
-
-    brick_width = 40;
-    brick_height = 20;
-
-    paddle_init_width = 100;
-    paddle_init_height = 20;
-
-    time_speed = ref 20;
+let game : t_camlbrick = {
+  param = make_camlbrick_param ();
+  matrix = Array.make_matrix canvas_height canvas_width BK_empty;
+  paddle =  {
+    size = PS_MEDIUM;
+    position = (ref 0, 0)
   };
-  matrix = Array.make_matrix 8 30 BK_empty;
-  paddle = paddle;
-  ball = []
+  ball = [{
+    position = (0, 0);
+    speed = ref (make_vec2 (0, 0));
+    size = BS_MEDIUM
+  }]
 };;
 
 (**
-  Cette suite de tests temoignent du fonctionement de nos raquettes
+  Cette suite de tests temoignent du fonctionement de notre raquette
+
   @author Matéo Abrane
 *)
+let test_struct_make_paddle () : unit =
+  let res : t_paddle t_test_result = test_exec (
+    make_paddle,
+    "Structurel -> make_paddle",
+    ()
+  )
+  in
 
-let test_fonc_make_paddle () : unit =
-  let res_make_paddle : t_paddle t_test_result = test_exec (make_paddle, "make_paddle", ()) in
-
-  assert_equals ({ size = PS_MEDIUM; position = (ref 0, 0)}, test_get res_make_paddle)
+  assert_equals_result (
+    { size = PS_MEDIUM ; position = (ref 0, 0)},
+    res
+  )
 ;;
+let test_struct_paddle_x () : unit =
+  let res : int t_test_result = test_exec (
+    paddle_x,
+    "Structurel -> paddle_x",
+    game
+  )
+  in
 
-let test_fonc_paddle_size_pixel () : unit =
-  let res_paddle_size_pixel : int t_test_result = test_exec (paddle_size_pixel, "paddle_size_pixel", camlbrick) in
-
-  assert_equals (200, test_get res_paddle_size_pixel)
+  assert_equals (0, test_get res)
 ;;
+let test_struct_paddle_size_pixel () : unit =
+  let res : int t_test_result = test_exec (
+    paddle_size_pixel,
+    "Structurel -> paddle_size_pixel",
+    game
+  )
+  in
 
-let test_fonc_paddle_x () : unit =
-  let res_paddle_x : int t_test_result = test_exec (paddle_x, "paddle_x", camlbrick) in
-
-    assert_equals(10, test_get res_paddle_x)
+  assert_equals (200, test_get res)
 ;;
 
 test_reset_report ();;
 
-test_fonc_make_paddle ();;
-test_fonc_paddle_size_pixel ();;
-test_fonc_paddle_x ();;
+test_struct_make_paddle ();;
+test_struct_paddle_x ();;
+test_struct_paddle_size_pixel ();;
 
 test_report ();;

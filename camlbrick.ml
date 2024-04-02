@@ -365,11 +365,12 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
     game.matrix.(i).(j) <- BK_simple
   else if brick = BK_block then
     game.matrix.(i).(j) <- BK_block
-  else ()
+  else
+    ()
 ;;
 
 (**
-  Renvoie la couleur de la bricque en fonction des coordonnées.
+  Renvoie la couleur de la brique en fonction des coordonnées.
 
   @author Paul Ourliac
 *)
