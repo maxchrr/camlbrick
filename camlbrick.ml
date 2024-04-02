@@ -285,18 +285,9 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
   @return partie correctement initialisé.
 *)
 let make_camlbrick () : t_camlbrick =
-  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
-  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
-
-  for x = 0 to Array.length map - 1 do
-    for y = 0 to Array.length map.(x) - 1 do
-      map.(x).(y) <- tab.(Random.int (Array.length tab))
-    done;
-  done;
-
   {
     param = make_camlbrick_param ();
-    matrix = map;
+    matrix = Array.make_matrix 20 31 BK_empty;
     paddle =  {
       size = PS_MEDIUM;
       position = (ref 0, 0)
