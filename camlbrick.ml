@@ -357,13 +357,14 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   let brick : t_brick_kind = brick_get (game, i, j) in
 
-  if brick = BK_bonus then
-    game.matrix.(i).(j) <- BK_empty
-  else if brick = BK_simple then
+  if brick = BK_simple then
     game.matrix.(i).(j) <- BK_empty
   else if brick = BK_double then
     game.matrix.(i).(j) <- BK_simple
-  else if brick = BK_block then
+  else if brick = BK_bonus then begin
+    game.matrix.(i).(j) <- BK_empty;
+    (* Action à réaliser -> deux balles par exemple *)
+  end else if brick = BK_block then
     game.matrix.(i).(j) <- BK_block
   else
     ()
@@ -420,8 +421,8 @@ let paddle_size_pixel (game : t_camlbrick) : int =
   @author Paul Ourliac
 *)
 let paddle_move_left (game : t_camlbrick) : unit =
-  if paddle_x (game) < 0 then
-    fst game.paddle.position := !(fst game.paddle.position) - 1
+  if paddle_x game < 0 then
+    fst game.paddle.position := !(fst game.paddle.position) - 10
   else
     ()
 ;;
@@ -432,12 +433,12 @@ let paddle_move_left (game : t_camlbrick) : unit =
   @author Paul Ourliac
 *)
 let paddle_move_right (game : t_camlbrick) : unit =
-  let l_param : t_camlbrick_param = param_get game in
+  let param : t_camlbrick_param = param_get game in
 
   if
-    (paddle_x game * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
+    paddle_x game * param.paddle_init_width + param.paddle_init_width < param.world_width
   then
-    fst game.paddle.position := !(fst game.paddle.position) + 1
+    fst game.paddle.position := !(fst game.paddle.position) + 10
   else
     ()
 ;;
