@@ -24,6 +24,9 @@ camlbrick: $(OBJ)
 
 # Cible de test
 test: camlbrick.cmo CPtest.cmo
+	@echo "Iteration 1"
+	ocaml tests_iteration1.ml
+	@echo "\nIteration 2"
 	ocaml tests_iteration2.ml
 	@make clean
 

@@ -9,7 +9,7 @@
 
   @author Max Charrier
   @author Paul Ourliac
-  @author Mateo Abrane
+  @author Matéo Abrane
   @author Axel De Les Champs--Vieira
 
   @version 1
