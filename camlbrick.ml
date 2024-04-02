@@ -279,6 +279,28 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
 ;;
 
 (**
+  Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
+
+  @author Max Charrier
+  @return partie correctement initialisé.
+*)
+let make_camlbrick () : t_camlbrick =
+  {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix 20 31 (make_empty_brick ());
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 1, 1)
+    };
+    ball = [{
+      position = (1, 1);
+      speed = make_vec2 (0, 0);
+      size = BS_MEDIUM
+    }]
+  }
+;;
+
+(**
   Création d'une raquette par défaut au milieu de l'écran et de taille normal.
 
   @author Paul Ourliac
@@ -301,21 +323,6 @@ let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
     position = (x, y);
     speed = make_vec2 (0, 0);
     size = size
-  }
-;;
-
-(**
-  Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
-
-  @author Max Charrier
-  @return partie correctement initialisé.
-*)
-let make_camlbrick () : t_camlbrick =
-  {
-    param = make_camlbrick_param ();
-    matrix = Array.make_matrix 20 31 (make_empty_brick ());
-    paddle = make_paddle ();
-    ball = [make_ball (0, 0, BS_MEDIUM)]
   }
 ;;
 
@@ -513,11 +520,11 @@ let ball_y (game, ball : t_camlbrick * t_ball) : int =
 *)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
   if ball.size = BS_SMALL then
-    20
+    10
   else if ball.size = BS_MEDIUM then
-    40
+    20
   else
-    80
+    30
 ;;
 
 (**
