@@ -285,15 +285,24 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
   @return partie correctement initialisé.
 *)
 let make_camlbrick () : t_camlbrick =
+  let tab : t_brick_kind array = [| BK_simple; BK_double; BK_block; BK_bonus |] in
+  let map : t_brick_kind array array = Array.make_matrix 20 31 BK_empty in
+
+  for x = 0 to Array.length map - 1 do
+    for y = 0 to Array.length map.(x) - 1 do
+      map.(x).(y) <- tab.(Random.int (Array.length tab))
+    done;
+  done;
+
   {
     param = make_camlbrick_param ();
-    matrix = Array.make_matrix 20 31 (make_empty_brick ());
+    matrix = map;
     paddle =  {
       size = PS_MEDIUM;
-      position = (ref 1, 1)
+      position = (ref 0, 0)
     };
     ball = [{
-      position = (1, 1);
+      position = (0, 0);
       speed = make_vec2 (0, 0);
       size = BS_MEDIUM
     }]
@@ -671,13 +680,11 @@ let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * i
   @param keyCode code entier de la touche appuyée
 *)
 let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) : unit =
-  (*
   print_string "Key pressed: ";
   print_string key_string;
   print_string " code=";
   print_int key_code;
   print_newline ()
-  *)
   (*
   Key pressed: z code=122
   Key released: z code=122
@@ -696,6 +703,7 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   Key pressed: Right code=65363
   Key released: Right code=65363
   *)
+  (*
   let left_key_code : int = 65361 in
   let q_key_code : int = 113 in
   let right_key_code : int = 65363 in
@@ -707,6 +715,7 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
     paddle_move_right game
   else
     ()
+  *)
 ;;
 
 (**

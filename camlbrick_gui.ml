@@ -168,7 +168,10 @@ let rec cbg_ball_update (param, game, cbgui, balls, balls_gui : t_camlbrick_para
 (* let id = (Canvas.create_oval ~fill:cfill ~outline:`White x1 y1 x2 y2 canvas) in *)
 
 let rec cbg_animate_action param game cbgui () =
-  Scale.set (cbgui.sc_speed) (float_of_int (speed_get(game)));
+  Scale.set
+    cbgui.sc_speed
+    (float_of_int (speed_get(game)))
+  ;
 
   let state = string_of_gamestate game in
   Textvariable.set cbgui.lv_gamestate state;
@@ -189,8 +192,16 @@ let rec cbg_animate_action param game cbgui () =
   done;
 
   (* on dessine la raquette *)
-  let paddle_dx = paddle_x (game) - cbgui.paddle_prevx in
-  Canvas.move (cbgui.canvas) (cbgui.paddle_gui) ~x:(paddle_dx) ~y:0;
+  let paddle_dx =
+    paddle_x (game) - cbgui.paddle_prevx
+  in
+
+  Canvas.move
+    cbgui.canvas
+    cbgui.paddle_gui
+    ~x:paddle_dx
+    ~y:0
+  ;
   cbgui.paddle_prevx <- paddle_x game;
 
   (* on dessine les balles *)
@@ -282,10 +293,10 @@ let make_camlbrick_gui (
   and c_PAD_INIT_WIDTH = param.paddle_init_width
   and c_PAD_INIT_HEIGHT = param.paddle_init_height
   in
-  let c_PAD_X1 = (c_WIN_WIDTH - c_PAD_INIT_WIDTH) / 2
-  and c_PAD_X2 = (c_WIN_WIDTH + c_PAD_INIT_WIDTH) / 2
-  and c_PAD_Y1 = (c_WIN_HEIGHT - c_PAD_INIT_HEIGHT - 10)
-  and c_PAD_Y2 = (c_WIN_HEIGHT - 10)
+  let c_PAD_X1 = (c_WIN_WIDTH - c_PAD_INIT_WIDTH) / 2 (* 350 *)
+  and c_PAD_X2 = (c_WIN_WIDTH + c_PAD_INIT_WIDTH) / 2 (* 450 *)
+  and c_PAD_Y1 = (c_WIN_HEIGHT - c_PAD_INIT_HEIGHT - 10) (* 770 *)
+  and c_PAD_Y2 = (c_WIN_HEIGHT - 10) (* 790 *)
   in
   let dx = c_WIN_WIDTH / c_BRICK_WIDTH
   and dy = c_WIN_BRICKS_HEIGHT / c_BRICK_HEIGHT
@@ -394,9 +405,16 @@ let make_camlbrick_gui (
     (float_of_int (speed_get (game)))
   ;
 
-  pack [coe l_option];
-  pack ~fill:`X [coe sc_speed];
-  pack [coe canvas];
+  pack
+    [coe l_option]
+  ;
+  pack
+    ~fill:`X
+    [coe sc_speed]
+  ;
+  pack
+    [coe canvas]
+  ;
   pack
     [
       coe f_option;
@@ -410,7 +428,10 @@ let make_camlbrick_gui (
     ]
     ~side:`Top
   ;
-  pack [coe f_game; coe f_menu] ~side:`Left;
+  pack
+    [coe f_game; coe f_menu]
+    ~side:`Left
+  ;
 
   let cbg_b_startstop_onclick game () : unit =
     if (Textvariable.get bv_startstop) = "Start" then
