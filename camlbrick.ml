@@ -720,11 +720,14 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   @param keyCode code entier de la touche relachée
 *)
 let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) =
+  (*
   print_string "Key released: ";
   print_string key_string;
   print_string " code=";
   print_int key_code;
   print_newline ()
+  *)
+  ()
 ;;
 
 (**
