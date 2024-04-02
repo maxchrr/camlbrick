@@ -3,31 +3,30 @@
      / __|   __ _    _ __     | |    | _ )     _ _    (_)     __     | |__
     | (__   / _` |  | '  \    | |    | _ \    | '_|   | |    / _|    | / /
      \___|  \__,_|  |_|_|_|  _|_|_   |___/   _|_|_   _|_|_   \__|_   |_\_\
-   _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
-   "`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
+  _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
+  "`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
 
 
-
-    Introduction
+   Introduction
 
 CamlBrick est un projet de jeu de casse-brique basé sur Tcl/Tk, via le module
 LablTk.
 
-L'objectif principal de ce projet est de créer un jeu de type casse-brique de
-manière collaborative sous la forme d'équipe de 4 étudiants.
+L'objectif principal de ce projet est de créer un jeu de type casse-brique
+de manière collaborative sous la forme d'équipe de 4 étudiants.
 
 Le jeu du casse-brique donne la possibilité de contrôle, à un humain, d'une
-raquette qui ne peut que se déplacer horizontalement en bas de l'écran. Cette
-raquette permet de faire rebondir une balle qui se déplace dans le niveau. Si
-une balle touche une brique alors cette dernière est détruite. L'objectif est
-donc de détruire toutes les briques destructibles du niveau.
+raquette qui ne peut que se déplacer horizontalement en bas de l'écran.
+Cette raquette permet de faire rebondir une balle qui se déplace dans le
+niveau. Si une balle touche une brique alors cette dernière est détruite.
+L'objectif est donc de détruire toutes les briques destructibles du niveau.
 
 La difficulté du jeu consiste à rattraper la balle avec la raquette pour la
 guider vers les briques restantes du niveau. Une balle peut rebondir sur les
 bords latéraux et le bord haut de la carte. Elle rebondit aussi sur les
 briques. Cependant, si une balle dépasse la zone de rebond de la raquette
-alors la balle est détruite. Le jeu est perdu lorsqu'il n'y a plus de balle à
-l'écran.
+alors la balle est détruite. Le jeu est perdu lorsqu'il n'y a plus de balle
+àl'écran.
 
 
    Motivations
@@ -36,8 +35,8 @@ CamlBrick est un projet réalisé dans le cadre de l'Unité d'Enseignement
 "Compléments de programmation" de la licence informatique de l'UFR Sciences
 Fondamentales et Appliquées de l'Université de Poitiers.
 
-Le projet est réalisé en groupe, dont les membres sont listés dans le fichier
-AUTHOR.
+Le projet est réalisé en groupe, dont les membres sont listés dans le
+fichier AUTHOR.
 
 
    Légal
@@ -45,4 +44,4 @@ AUTHOR.
 L'intégralité des sources de CamlBrick et de ses composants sont open-source,
 distribués sous licence Apache License, Version 2.0. Une notice de licence
 est disponible dans le fichier NOTICE, et une copie de la licence est
-disponible dans le fichier LICENSE.
+disponible dans le fichier COPYRIGHT.
