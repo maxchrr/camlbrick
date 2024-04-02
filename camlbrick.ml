@@ -456,7 +456,7 @@ let paddle_move_right (game : t_camlbrick) : unit =
   @author Axel De Les Champs--Vieira
 *)
 let has_ball (game : t_camlbrick) : bool =
-  game.ball = []
+  game.ball <> []
 ;;
 
 (**
@@ -558,7 +558,7 @@ let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
     @author Max Charrier
 *)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
-  ball.speed := vec2_add (!(ball.speed), dv);
+  ball.speed := vec2_add (!(ball.speed), dv)
 ;;
 
 (**
@@ -569,7 +569,7 @@ let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
     @author Max Charrier
 *)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
-  ball.speed := vec2_mult (!(ball.speed), sv);
+  ball.speed := vec2_mult (!(ball.speed), sv)
 ;;
 
 (**
