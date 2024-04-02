@@ -625,7 +625,12 @@ let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
-  ()
+  print_string "Mouse moved: ";
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -639,7 +644,14 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  ()
+  print_string "Mouse pressed: ";
+  print_string " button=";
+  print_int button;
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -653,7 +665,14 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   @param y l'ordonnée de la position du relachement
 *)
 let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  ()
+  print_string "Mouse released: ";
+  print_string " button=";
+  print_int button;
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -727,7 +746,17 @@ let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int)
   print_int key_code;
   print_newline ()
   *)
-  ()
+  let left_key_code : int = 65361 in
+  let q_key_code : int = 113 in
+  let right_key_code : int = 65363 in
+  let d_right_code : int = 100 in
+
+  if key_code = left_key_code || key_code = q_key_code then
+    paddle_move_left game
+  else if key_code = right_key_code || key_code = d_right_code then
+    paddle_move_right game
+  else
+    ()
 ;;
 
 (**
