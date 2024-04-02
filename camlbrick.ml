@@ -220,7 +220,7 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 type t_ball  =
   {
     position : int * int;
-    speed : t_vec2;
+    speed : t_vec2 ref;
     size : t_ball_size
   }
 ;;
@@ -303,7 +303,7 @@ let make_camlbrick () : t_camlbrick =
     };
     ball = [{
       position = (0, 0);
-      speed = make_vec2 (0, 0);
+      speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }]
   }
@@ -330,7 +330,7 @@ let make_paddle () : t_paddle =
 let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
   {
     position = (x, y);
-    speed = make_vec2 (0, 0);
+    speed = ref (make_vec2 (0, 0));
     size = size
   }
 ;;
@@ -555,12 +555,10 @@ let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
 
     On peut alors augmenter ou diminuer la vitesse de la balle.
 
-    TODO : coder la fonction
-
-    @author ...
+    @author Max Charrier
 *)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
-  ()
+  ball.speed := vec2_add (!(ball.speed), dv);
 ;;
 
 (**
@@ -568,12 +566,10 @@ let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
 
     On peut alors augmenter ou diminuer la vitesse de la balle.
 
-    TODO : coder la fonction
-
-    @author ...
+    @author Max Charrier
 *)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
-  ()
+  ball.speed := vec2_mult (!(ball.speed), sv);
 ;;
 
 (**
