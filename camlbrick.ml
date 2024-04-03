@@ -565,27 +565,24 @@ let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : uni
 ;;
 
 (**
-  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de raydon rad.
+  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de rayon rad.
 
-  TODO : coder la fonction
-
-  @author ...
+  @author Matéo Abrane
 *)
 let is_inside_circle (cx, cy, rad, x, y : int * int * int * int * int) : bool =
-  (* Itération 3 *)
-  false
+  let fst_point : float = Float.pow (float_of_int (x - cx)) 2. in
+  let snd_point : float = float_of_int (cy - y) in
+
+  Float.sqrt (fst_point +. snd_point) < (float_of_int rad)
 ;;
 
 (**
   Détecte si un point (x,y) se trouve à l'intérieur d'un rectangle formé.
 
-  TODO : coder la fonction
-
-  @author ...
+  @author Matéo Abrane
 *)
 let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
-  (* Itération 3 *)
-  false
+  x >= x1 && x <= x2 && y >= y1 && y <= y2
 ;;
 
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
