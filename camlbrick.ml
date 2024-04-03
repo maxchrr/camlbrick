@@ -318,12 +318,25 @@ let make_paddle () : t_paddle =
 
   @author Max Charrier
 *)
-let make_ball (x, y, size : int * int * t_ball_size) : t_ball =
-  {
-    position = (x, y);
-    speed = ref (make_vec2 (0, 0));
-    size = size
-  }
+let make_ball (x, y, size : int * int * int) : t_ball =
+  if size = 10 then
+    {
+      position = (x, y);
+      speed = ref (make_vec2 (0, 0));
+      size = BS_SMALL
+    }
+  else if size = 20 then
+    {
+      position = (x, y);
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }
+  else
+    {
+      position = (x, y);
+      speed = ref (make_vec2 (0, 0));
+      size = BS_BIG
+    }
 ;;
 
 (**

@@ -16,7 +16,7 @@ all: camlbrick
 # Cible de build
 camlbrick: $(OBJ)
 	mkdir -p bin
-	$(CAMLC) -o bin/camlbrick -I $(LABLTK_DIR) labltk.cma $^
+	$(CAMLC) -o bin/$@ -I $(LABLTK_DIR) labltk.cma $^
 
 # Règle implicite pour compiler les fichiers .ml en .cmo
 %.cmo: %.ml
@@ -31,8 +31,8 @@ test: camlbrick.cmo CPtest.cmo
 	@make clean
 
 # Cible pour générer la documentation HTML
-html:
-	$(CAMLDOC) -html -d docs -charset utf8 $(SRC)
+html: camlbrick.cmo camlbrick_gui.cmo $(SRC)
+	$(CAMLDOC) -html -d docs -charset utf8 -I $(LABLTK_DIR) -g camlbrick.cmo $(SRC)
 
 # Cible pour compresser les fichiers source et la documentation
 compress:
@@ -40,6 +40,10 @@ compress:
 
 # Cible pour nettoyer les fichiers générés lors de la compilation
 clean:
-	@rm -rf bin *.cm* camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz
+	@rm -rf bin *.cm* camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz docs/*.{html,css}
+
+# Cible pour nettoyer les fichiers générés lors de la compilation, hors binaires
+cleanup:
+	@rm -rf *.cm* camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz docs/*.{html,css}
 
 .PHONY: build test html compress clean
