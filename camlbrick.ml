@@ -294,7 +294,7 @@ let make_camlbrick () : t_camlbrick =
     };
     ball = [{
       position = (400,750);
-      speed = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (10, 10));
       size = BS_MEDIUM
     }]
   }
@@ -820,11 +820,25 @@ let speed_change (game,xspeed : t_camlbrick * int) : unit=
   print_endline ("Change speed : " ^ string_of_int xspeed);
 ;;
 
+
+(**
+    Fait bouger les balles
+    @author Paul Ourliac
+*)
 let animate_action (game : t_camlbrick) : unit =
   (* Iteration 1,2,3 et 4
     Appelée par l'interface graphique à chaque frame
     du jeu vidéo.
     Vous devez mettre tout le code qui permet de montrer l'évolution du jeu vidéo.
   *)
-  ()
+  let l_current_ball : t_ball list ref = ref game.ball in
+  while !l_current_ball <> [] do
+    (
+    let l_ball : t_ball = List.hd (!l_current_ball) in
+    ( 
+    ball_modif_speed(game,l_ball,!(l_ball.speed));
+    l_current_ball := List.tl (!l_current_ball)
+    )
+    )
+  done
 ;;
