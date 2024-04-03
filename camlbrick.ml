@@ -629,27 +629,38 @@ let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : uni
 ;;
 
 (**
-  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de raydon rad.
+  Détecte si un point (x,y) se trouve à l'intérieur d'un disque de centre (cx,cy) et de rayon rad.
 
-  TODO : coder la fonction
-
-  @author ...
+  @author Matéo Abrane
+  @author Max Charrier
+  @param cx centre du disque en abscisse
+  @param cy centre du disque en ordonnée
+  @param rad rayon du cercle
+  @param x point en abscisse
+  @param y point en ordonnée
+  @return si le point est dans le cercle
 *)
 let is_inside_circle (cx, cy, rad, x, y : int * int * int * int * int) : bool =
-  (* Itération 3 *)
-  false
+  let fst_point : float = Float.pow (float_of_int (x - cx)) 2. in
+  let snd_point : float = float_of_int (cy - y) in
+
+  Float.sqrt (fst_point +. snd_point) < (float_of_int rad)
 ;;
 
 (**
   Détecte si un point (x,y) se trouve à l'intérieur d'un rectangle formé.
 
-  TODO : coder la fonction
-
-  @author ...
+  @author Matéo Abrane
+  @param x1 coordonnée (0, 0) du rectangle
+  @param y1 coordonnée (0, 1) du rectangle
+  @param x2 coordonnée (1, 0) du rectangle
+  @param y2 coordonnée (1, 1) du rectangle
+  @param x point en abscisse
+  @param y point en ordonnée
+  @return si le point est dans le rectangle
 *)
 let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : bool =
-  (* Itération 3 *)
-  false
+  x >= x1 && x <= x2 && y >= y1 && y <= y2
 ;;
 
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
