@@ -25,6 +25,7 @@ let game : t_camlbrick = {
   Cette suite de tests temoignent du fonctionement de notre raquette
 
   @author Matéo Abrane
+  @author Max Charrier
 *)
 let test_struct_make_paddle () : unit =
   let res : t_paddle t_test_result = test_exec (
