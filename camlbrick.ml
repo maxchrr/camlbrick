@@ -292,7 +292,11 @@ let make_camlbrick () : t_camlbrick =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = []
+    ball = [{
+      position = (400,750);
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }]
   }
 ;;
 
@@ -366,13 +370,14 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
 let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   let brick : t_brick_kind = brick_get (game, i, j) in
 
-  if brick = BK_bonus then
-    game.matrix.(i).(j) <- BK_empty
-  else if brick = BK_simple then
+  if brick = BK_simple then
     game.matrix.(i).(j) <- BK_empty
   else if brick = BK_double then
     game.matrix.(i).(j) <- BK_simple
-  else if brick = BK_block then
+  else if brick = BK_bonus then begin
+    game.matrix.(i).(j) <- BK_empty;
+    (* Action à réaliser -> deux balles par exemple *)
+  end else if brick = BK_block then
     game.matrix.(i).(j) <- BK_block
   else
     ()
@@ -429,8 +434,8 @@ let paddle_size_pixel (game : t_camlbrick) : int =
   @author Paul Ourliac
 *)
 let paddle_move_left (game : t_camlbrick) : unit =
-  if paddle_x (game) < 0 then
-    fst game.paddle.position := !(fst game.paddle.position) - 1
+  if paddle_x game > paddle_size_pixel(game)/4 - game.param.world_width/2   then
+    fst game.paddle.position := !(fst game.paddle.position) - 10
   else
     ()
 ;;
@@ -441,12 +446,12 @@ let paddle_move_left (game : t_camlbrick) : unit =
   @author Paul Ourliac
 *)
 let paddle_move_right (game : t_camlbrick) : unit =
-  let l_param : t_camlbrick_param = param_get game in
+  let param : t_camlbrick_param = param_get game in
 
   if
-    (paddle_x game * l_param.paddle_init_width) + l_param.paddle_init_width < l_param.world_width
+    paddle_x game < (param.world_width /2) - paddle_size_pixel(game)/4
   then
-    fst game.paddle.position := !(fst game.paddle.position) + 1
+    fst game.paddle.position := !(fst game.paddle.position) + 10
   else
     ()
 ;;
@@ -530,11 +535,11 @@ let ball_y (game, ball : t_camlbrick * t_ball) : int =
 *)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
   if ball.size = BS_SMALL then
-    10
+    5
   else if ball.size = BS_MEDIUM then
-    20
+    10
   else
-    30
+    15
 ;;
 
 (**
@@ -633,7 +638,12 @@ let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
-  ()
+  print_string "Mouse moved: ";
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -647,7 +657,14 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  ()
+  print_string "Mouse pressed: ";
+  print_string " button=";
+  print_int button;
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -661,7 +678,14 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   @param y l'ordonnée de la position du relachement
 *)
 let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  ()
+  print_string "Mouse released: ";
+  print_string " button=";
+  print_int button;
+  print_string " x=";
+  print_int x;
+  print_string " y=";
+  print_int y;
+  print_newline ()
 ;;
 
 (**
@@ -728,11 +752,26 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   @param keyCode code entier de la touche relachée
 *)
 let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) =
+  
   print_string "Key released: ";
   print_string key_string;
   print_string " code=";
   print_int key_code;
   print_newline ()
+  
+  (*
+  let left_key_code : int = 65361 in
+  let q_key_code : int = 113 in
+  let right_key_code : int = 65363 in
+  let d_right_code : int = 100 in
+
+  if key_code = left_key_code || key_code = q_key_code then
+    paddle_move_left game
+  else if key_code = right_key_code || key_code = d_right_code then
+    paddle_move_right game
+  else
+    ()
+    *)
 ;;
 
 (**
