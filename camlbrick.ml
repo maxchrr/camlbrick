@@ -243,7 +243,8 @@ type t_camlbrick =
     param: t_camlbrick_param;
     matrix : t_brick_kind array array;
     paddle : t_paddle;
-    ball : t_ball list
+    balls : t_ball list;
+    speed : int ref
   }
 ;;
 
@@ -293,11 +294,12 @@ let make_camlbrick () : t_camlbrick =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
+    balls = [{
       position = (400,750);
       speed = ref (make_vec2 (10, 10));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
 ;;
 
@@ -492,7 +494,7 @@ let paddle_move_right (game : t_camlbrick) : unit =
   @return s'il y a une balle ou non dans la partie.
 *)
 let has_ball (game : t_camlbrick) : bool =
-  game.ball <> []
+  game.balls <> []
 ;;
 
 (**
@@ -504,10 +506,10 @@ let has_ball (game : t_camlbrick) : bool =
   @return nombre de balle dans la partie.
 *)
 let balls_count (game : t_camlbrick) : int =
-  if game.ball = [] then
+  if game.balls = [] then
     0
   else
-    List.length game.ball
+    List.length game.balls
 ;;
 
 (**
@@ -518,7 +520,7 @@ let balls_count (game : t_camlbrick) : int =
   @return liste des balles de la partie.
 *)
 let balls_get (game : t_camlbrick) : t_ball list =
-  game.ball
+  game.balls
 ;;
 
 (**
@@ -546,7 +548,7 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
     ]}
   *)
 
-  List.nth game.ball i
+  List.nth game.balls i
 ;;
 
 (**
@@ -709,12 +711,15 @@ let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
+  (*
   print_string "Mouse moved: ";
   print_string " x=";
   print_int x;
   print_string " y=";
   print_int y;
   print_newline ()
+  *)
+  ()
 ;;
 
 (**
@@ -881,7 +886,7 @@ let start_onclick (game : t_camlbrick) : unit=
 
   @param game la partie en cours
 *)
-let stop_onclick(game : t_camlbrick) : unit =
+let stop_onclick (game : t_camlbrick) : unit =
   ()
 ;;
 
@@ -890,39 +895,58 @@ let stop_onclick(game : t_camlbrick) : unit =
   du slider Speed dans la zone du menu.
 
   Vous pouvez donc renvoyer une valeur selon votre désir afin d'offrir la possibilité d'interagir avec le joueur.
+
+  @param game partie en cours d'exécution
+  @return vitesse du slider speed dans le menu contextuel.
 *)
 let speed_get (game : t_camlbrick) : int =
-  0
+  !(game.speed)
 ;;
 
 (**
   Appelée par l'interface graphique pour indiquer que le slide Speed dans la zone de menu a été modifiée.
 
   Ainsi, vous pourrez réagir selon le joueur.
+
+  @param game partie en cours d'exécution
+  @xspeed vitesse à modifier
 *)
-let speed_change (game,xspeed : t_camlbrick * int) : unit=
-  print_endline ("Change speed : " ^ string_of_int xspeed);
+let speed_change (game, xspeed : t_camlbrick * int) : unit =
+  (* print_endline ("Change speed : " ^ string_of_int xspeed); *)
+  game.speed := xspeed
 ;;
 
 
 (**
-    Fait bouger les balles
+    Animation des balles dans la partie en cours.
+
+    Appelée par l'interface graphique à chaque frame du jeu vidéo.
+    Mettre ici tout le code qui permet de montrer l'évolution du jeu.
+
     @author Paul Ourliac
+    @author Max Charrier
+    @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
-  (* Iteration 1,2,3 et 4
-    Appelée par l'interface graphique à chaque frame
-    du jeu vidéo.
-    Vous devez mettre tout le code qui permet de montrer l'évolution du jeu vidéo.
+  (*
+  let balls : t_ball list ref = ref game.balls in
+
+  while !balls <> [] do
+    let ball : t_ball = List.hd !balls in
+
+    ball_modif_speed (game, ball, !(ball.speed));
+    balls := List.tl !balls
+  done
   *)
-  let l_current_ball : t_ball list ref = ref game.ball in
-  while !l_current_ball <> [] do
-    (
-    let l_ball : t_ball = List.hd (!l_current_ball) in
-    ( 
-    ball_modif_speed(game,l_ball,!(l_ball.speed));
-    l_current_ball := List.tl (!l_current_ball)
-    )
+  let balls : t_ball list = game.balls in
+
+  for i = 0 to List.length balls - 1 do
+    let ball : t_ball = List.hd balls in
+
+    ball_modif_speed (
+      game,
+      ball,
+      { x = speed_get game ; y = speed_get game}
     )
   done
 ;;
