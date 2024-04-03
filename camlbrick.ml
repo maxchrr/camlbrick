@@ -296,7 +296,7 @@ let make_camlbrick () : t_camlbrick =
     };
     balls = [{
       position = (400,750);
-      speed = ref (make_vec2 (10, 10));
+      speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }];
     speed = ref 0
@@ -947,6 +947,9 @@ let animate_action (game : t_camlbrick) : unit =
       game,
       ball,
       { x = speed_get game ; y = speed_get game}
-    )
+    );
+
+    print_string "vitesse actuelle =";
+    print_int !(ball.speed).x;
   done
 ;;
