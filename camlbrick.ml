@@ -319,13 +319,13 @@ let make_paddle () : t_paddle =
   @author Max Charrier
 *)
 let make_ball (x, y, size : int * int * int) : t_ball =
-  if size = 10 then
+  if size = 5 then
     {
       position = (x, y);
       speed = ref (make_vec2 (0, 0));
       size = BS_SMALL
     }
-  else if size = 20 then
+  else if size = 10 then
     {
       position = (x, y);
       speed = ref (make_vec2 (0, 0));
@@ -752,13 +752,13 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   @param keyCode code entier de la touche relachée
 *)
 let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) =
-  
+
   print_string "Key released: ";
   print_string key_string;
   print_string " code=";
   print_int key_code;
   print_newline ()
-  
+
   (*
   let left_key_code : int = 65361 in
   let q_key_code : int = 113 in
