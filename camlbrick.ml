@@ -951,5 +951,6 @@ let animate_action (game : t_camlbrick) : unit =
 
     print_string "vitesse actuelle =";
     print_int !(ball.speed).x;
+    print_newline ()
   done
 ;;
