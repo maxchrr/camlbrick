@@ -317,6 +317,10 @@ let make_paddle () : t_paddle =
   Création d'un balle par défaut.
 
   @author Max Charrier
+  @param x position en abscisse
+  @param y position en ordonnée
+  @param size taille de la balle
+  @return balle initialisée.
 *)
 let make_ball (x, y, size : int * int * int) : t_ball =
   if size = 5 then
@@ -354,9 +358,13 @@ let string_of_gamestate (game : t_camlbrick) : string =
 ;;
 
 (**
-  Renvoie le type de la brick en fonction des coordonnées.
+  Renvoie le type de la brique en fonction des coordonnées.
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
+  @param i partie horizontal de la matrice de brique
+  @param j partie vertical de la matrice de brique
+  @return type d'une brique.
 *)
 let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   game.matrix.(i).(j)
@@ -366,8 +374,11 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param i partie horizontal de la matrice de brique
+  @param j partie vertical de la matrice de brique
 *)
-let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
+let brick_hit (game, i, j : t_camlbrick * int * int) : unit =
   let brick : t_brick_kind = brick_get (game, i, j) in
 
   if brick = BK_simple then
@@ -387,6 +398,10 @@ let brick_hit (game, i, j : t_camlbrick * int * int)  : unit =
   Renvoie la couleur de la brique en fonction des coordonnées.
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
+  @param i partie horizontal de la matrice de brique
+  @param j partie vertical de la matrice de brique
+  @return couleur d'une brique.
 *)
 let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   let brick : t_brick_kind = brick_get (game, i, j) in
@@ -407,6 +422,8 @@ let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   Renvoie la position selon l'axe horizontale de la raquette.
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
+  @return position en abscisse de la raquette.
 *)
 let paddle_x (game : t_camlbrick) : int =
   !(fst game.paddle.position)
@@ -416,6 +433,8 @@ let paddle_x (game : t_camlbrick) : int =
   Renvoie la taille en pixel de la raquette
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
+  @return taille en pixel de la raquette.
 *)
 let paddle_size_pixel (game : t_camlbrick) : int =
   let param : t_camlbrick_param = param_get game in
@@ -432,9 +451,12 @@ let paddle_size_pixel (game : t_camlbrick) : int =
   Déplace la raquette vers la gauche.
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
 *)
 let paddle_move_left (game : t_camlbrick) : unit =
-  if paddle_x game > paddle_size_pixel(game)/4 - game.param.world_width/2   then
+  if
+    paddle_x game > (paddle_size_pixel game) / 4 - game.param.world_width / 2
+  then
     fst game.paddle.position := !(fst game.paddle.position) - 10
   else
     ()
@@ -444,12 +466,13 @@ let paddle_move_left (game : t_camlbrick) : unit =
   Déplace la raquette vers la droite.
 
   @author Paul Ourliac
+  @param game partie en cours d'exécution
 *)
 let paddle_move_right (game : t_camlbrick) : unit =
   let param : t_camlbrick_param = param_get game in
 
   if
-    paddle_x game < (param.world_width /2) - paddle_size_pixel(game)/4
+    paddle_x game < (param.world_width / 2) - (paddle_size_pixel game) / 4
   then
     fst game.paddle.position := !(fst game.paddle.position) + 10
   else
@@ -460,6 +483,8 @@ let paddle_move_right (game : t_camlbrick) : unit =
   Indique si la partie en cours possèdes des balles.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @return s'il y a une balle ou non dans la partie.
 *)
 let has_ball (game : t_camlbrick) : bool =
   game.ball <> []
@@ -469,6 +494,8 @@ let has_ball (game : t_camlbrick) : bool =
   Renvoie le nombre de balle présente dans une partie.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @return nombre de balle dans la partie.
 *)
 let balls_count (game : t_camlbrick) : int =
   if game.ball = [] then
@@ -481,6 +508,8 @@ let balls_count (game : t_camlbrick) : int =
   Récupérer la liste de toutes les balles de la partie en cours.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @return liste des balles de la partie.
 *)
 let balls_get (game : t_camlbrick) : t_ball list =
   game.ball
@@ -490,6 +519,9 @@ let balls_get (game : t_camlbrick) : t_ball list =
   Récupère la i-ième balle d'une partie, i compris entre 0 et n, avec n le nombre de balles.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param i partie horizontal de la matrice de brique
+  @return paramètres de la balle.
 *)
 let ball_get (game, i : t_camlbrick * int) : t_ball =
   (*
@@ -514,6 +546,9 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
   Renvoie l'abscisse du centre d'une balle.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param ball balle
+  @return position en abscisse de la balle
 *)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
   fst ball.position
@@ -523,6 +558,9 @@ let ball_x (game, ball : t_camlbrick * t_ball) : int =
   Renvoie l'ordonnée du centre d'une balle.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param ball balle
+  @return position en ordonnée de la balle
 *)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
   snd ball.position
@@ -532,6 +570,9 @@ let ball_y (game, ball : t_camlbrick * t_ball) : int =
   Indique le diamètre du cercle représentant la balle en fonction de sa taille.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param ball balle
+  @return taille de la balle
 *)
 let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
   if ball.size = BS_SMALL then
@@ -546,6 +587,9 @@ let ball_size_pixel (game, ball : t_camlbrick * t_ball) : int =
   Donne une couleur différentes pour chaque taille de balle.
 
   @author Axel De Les Champs--Vieira
+  @param game partie en cours d'exécution
+  @param ball balle
+  @return couleur de la balle
 *)
 let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
   if ball.size = BS_SMALL then
@@ -562,6 +606,9 @@ let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
     On peut alors augmenter ou diminuer la vitesse de la balle.
 
     @author Max Charrier
+    @param game partie en cours d'exécution
+    @param ball balle
+    @param dv vecteur
 *)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
   ball.speed := vec2_add (!(ball.speed), dv)
@@ -573,6 +620,9 @@ let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
     On peut alors augmenter ou diminuer la vitesse de la balle.
 
     @author Max Charrier
+    @param game partie en cours d'exécution
+    @param ball balle
+    @param sv vecteur
 *)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
   ball.speed := vec2_mult (!(ball.speed), sv)
