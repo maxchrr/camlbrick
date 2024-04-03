@@ -282,6 +282,7 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
   Création d'une nouvelle structure qui initialise le monde avec aucune brique visible, une raquette et une balle par défaut dans la zone libre.
 
   @author Max Charrier
+  @author Paul Ourliac
   @return partie correctement initialisé.
 *)
 let make_camlbrick () : t_camlbrick =
@@ -374,6 +375,7 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
   @param game partie en cours d'exécution
   @param i partie horizontal de la matrice de brique
   @param j partie vertical de la matrice de brique
@@ -422,6 +424,7 @@ let brick_color (game, i, j : t_camlbrick * int * int) : t_camlbrick_color =
   Renvoie la position selon l'axe horizontale de la raquette.
 
   @author Paul Ourliac
+  @author Max Charrier
   @param game partie en cours d'exécution
   @return position en abscisse de la raquette.
 *)
@@ -483,6 +486,8 @@ let paddle_move_right (game : t_camlbrick) : unit =
   Indique si la partie en cours possèdes des balles.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
+  @author Paul Ourliac
   @param game partie en cours d'exécution
   @return s'il y a une balle ou non dans la partie.
 *)
@@ -494,6 +499,7 @@ let has_ball (game : t_camlbrick) : bool =
   Renvoie le nombre de balle présente dans une partie.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
   @param game partie en cours d'exécution
   @return nombre de balle dans la partie.
 *)
@@ -519,6 +525,7 @@ let balls_get (game : t_camlbrick) : t_ball list =
   Récupère la i-ième balle d'une partie, i compris entre 0 et n, avec n le nombre de balles.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
   @param game partie en cours d'exécution
   @param i partie horizontal de la matrice de brique
   @return paramètres de la balle.
@@ -546,6 +553,7 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
   Renvoie l'abscisse du centre d'une balle.
 
   @author Axel De Les Champs--Vieira
+  @atuhor Max Charrier
   @param game partie en cours d'exécution
   @param ball balle
   @return position en abscisse de la balle
@@ -558,6 +566,7 @@ let ball_x (game, ball : t_camlbrick * t_ball) : int =
   Renvoie l'ordonnée du centre d'une balle.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
   @param game partie en cours d'exécution
   @param ball balle
   @return position en ordonnée de la balle
@@ -570,6 +579,7 @@ let ball_y (game, ball : t_camlbrick * t_ball) : int =
   Indique le diamètre du cercle représentant la balle en fonction de sa taille.
 
   @author Axel De Les Champs--Vieira
+  @author Max Charrier
   @param game partie en cours d'exécution
   @param ball balle
   @return taille de la balle
