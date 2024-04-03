@@ -213,13 +213,13 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 ;;
 
 (**
-  Définition de la balle par sa posiiton, son vecteur vitesse et sa taille.
+  Définition de la balle par sa position, son vecteur vitesse et sa taille.
 
   D'un point de vue de l'affichage, une balle se représente par un cercle.
 *)
 type t_ball  =
   {
-    position : int * int;
+    position : (int ref) * (int ref);
     speed : t_vec2 ref;
     size : t_ball_size
   }
@@ -295,7 +295,7 @@ let make_camlbrick () : t_camlbrick =
       position = (ref 0, 0)
     };
     balls = [{
-      position = (400,750);
+      position = (ref 400, ref 750);
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }];
@@ -328,19 +328,19 @@ let make_paddle () : t_paddle =
 let make_ball (x, y, size : int * int * int) : t_ball =
   if size = 5 then
     {
-      position = (x, y);
+      position = (ref x, ref y);
       speed = ref (make_vec2 (0, 0));
       size = BS_SMALL
     }
   else if size = 10 then
     {
-      position = (x, y);
+      position = (ref x, ref y);
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }
   else
     {
-      position = (x, y);
+      position = (ref x, ref y);
       speed = ref (make_vec2 (0, 0));
       size = BS_BIG
     }
@@ -561,7 +561,7 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
   @return position en abscisse de la balle
 *)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
-  fst ball.position
+  !(fst ball.position)
 ;;
 
 (**
@@ -574,7 +574,7 @@ let ball_x (game, ball : t_camlbrick * t_ball) : int =
   @return position en ordonnée de la balle
 *)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
-  snd ball.position
+  !(snd ball.position)
 ;;
 
 (**
@@ -947,6 +947,14 @@ let animate_action (game : t_camlbrick) : unit =
       game,
       ball,
       { x = speed_get game ; y = speed_get game}
+    );
+
+    ball.position = (ref !(ball.speed).x, ref !(ball.speed).y);
+
+    ball_modif_speed (
+      game,
+      ball,
+      { x = 0 ; y = 0}
     );
 
     print_string "vitesse actuelle =";
