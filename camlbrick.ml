@@ -156,8 +156,8 @@ let vec2_add (a, b : t_vec2 * t_vec2) : t_vec2 =
 
   Il s'agit d'une optimisation du code suivant :
   {[
-    let vec2_add_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
-      vec2_add(a, make_vec2(x,y))
+    let vec2_add_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
+      vec2_add (a, make_vec2 (x, y))
     ;;
   ]}
 
@@ -194,8 +194,8 @@ let vec2_mult (a, b : t_vec2 * t_vec2) : t_vec2 =
 
   Il s'agit d'une optimisation du code suivant :
   {[
-    let vec2_mult_scalar(a,x,y : t_vec2 * int * int) : t_vec2 =
-      vec2_mult(a, make_vec2(x,y))
+    let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
+      vec2_mult (a, make_vec2 (x, y))
     ;;
   ]}
 
@@ -219,7 +219,7 @@ let vec2_mult_scalar (a, x, y : t_vec2 * int * int) : t_vec2 =
 *)
 type t_ball  =
   {
-    position : (int ref) * (int ref);
+    position : t_vec2 ref;
     speed : t_vec2 ref;
     size : t_ball_size
   }
@@ -295,8 +295,8 @@ let make_camlbrick () : t_camlbrick =
       position = (ref 0, 0)
     };
     balls = [{
-      position = (ref 400, ref 750);
-      speed = ref (make_vec2 (0, 0));
+      position = ref (make_vec2 (400, 750));
+      speed = ref (make_vec2 (0, -1));
       size = BS_MEDIUM
     }];
     speed = ref 0
@@ -312,7 +312,7 @@ let make_camlbrick () : t_camlbrick =
 let make_paddle () : t_paddle =
   {
     size = PS_MEDIUM;
-    position = (ref 0 ,0)
+    position = (ref 0, 0)
   }
 ;;
 
@@ -328,19 +328,19 @@ let make_paddle () : t_paddle =
 let make_ball (x, y, size : int * int * int) : t_ball =
   if size = 5 then
     {
-      position = (ref x, ref y);
+      position = ref (make_vec2 (x, y));
       speed = ref (make_vec2 (0, 0));
       size = BS_SMALL
     }
   else if size = 10 then
     {
-      position = (ref x, ref y);
+      position = ref (make_vec2 (x, y));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }
   else
     {
-      position = (ref x, ref y);
+      position = ref (make_vec2 (x, y));
       speed = ref (make_vec2 (0, 0));
       size = BS_BIG
     }
@@ -561,7 +561,7 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
   @return position en abscisse de la balle
 *)
 let ball_x (game, ball : t_camlbrick * t_ball) : int =
-  !(fst ball.position)
+  !(ball.position).x
 ;;
 
 (**
@@ -574,7 +574,7 @@ let ball_x (game, ball : t_camlbrick * t_ball) : int =
   @return position en ordonnée de la balle
 *)
 let ball_y (game, ball : t_camlbrick * t_ball) : int =
-  !(snd ball.position)
+  !(ball.position).y
 ;;
 
 (**
@@ -613,28 +613,28 @@ let ball_color (game, ball : t_camlbrick * t_ball) : t_camlbrick_color =
 ;;
 
 (**
-    Modifie la vitesse d'une balle par accumulation avec un vecteur.
+  Modifie la vitesse d'une balle par accumulation avec un vecteur.
 
-    On peut alors augmenter ou diminuer la vitesse de la balle.
+  On peut alors augmenter ou diminuer la vitesse de la balle.
 
-    @author Max Charrier
-    @param game partie en cours d'exécution
-    @param ball balle
-    @param dv vecteur
+  @author Max Charrier
+  @param game partie en cours d'exécution
+  @param ball balle
+  @param dv vecteur
 *)
 let ball_modif_speed (game, ball, dv : t_camlbrick * t_ball * t_vec2) : unit =
   ball.speed := vec2_add (!(ball.speed), dv)
 ;;
 
 (**
-    Modifie la vitesse d'une balle par multiplication avec un vecteur.
+  Modifie la vitesse d'une balle par multiplication avec un vecteur.
 
-    On peut alors augmenter ou diminuer la vitesse de la balle.
+  On peut alors augmenter ou diminuer la vitesse de la balle.
 
-    @author Max Charrier
-    @param game partie en cours d'exécution
-    @param ball balle
-    @param sv vecteur
+  @author Max Charrier
+  @param game partie en cours d'exécution
+  @param ball balle
+  @param sv vecteur
 *)
 let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : unit =
   ball.speed := vec2_mult (!(ball.speed), sv)
@@ -847,11 +847,11 @@ let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int)
     paddle_move_right game
   else
     ()
-    *)
+  *)
 ;;
 
 (**
-  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom1 de la zone du menu.
+  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom2 de la zone du menu.
 *)
 let custom1_text () : string =
   (* Iteration 4 *)
@@ -928,18 +928,26 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
     @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
-  (*
+  
   let balls : t_ball list ref = ref game.balls in
 
   while !balls <> [] do
     let ball : t_ball = List.hd !balls in
 
     ball_modif_speed (game, ball, !(ball.speed));
+    ball.position := vec2_add(!(ball.position), !(ball.speed));
+    ball_modif_speed (game, ball, { x = 0 ; y = 0 });
+    
+    print_string "position x actuelle =";
+    print_int !(ball.position).x;
+    print_newline ();
+
     balls := List.tl !balls
   done
-  *)
+  
+  (*
   let balls : t_ball list = game.balls in
-
+  
   for i = 0 to List.length balls - 1 do
     let ball : t_ball = List.hd balls in
 
@@ -956,9 +964,10 @@ let animate_action (game : t_camlbrick) : unit =
       ball,
       { x = 0 ; y = 0}
     );
-
+    
+    let (l_x,l_y) : int ref * int ref = ball.position in  
     print_string "vitesse actuelle =";
-    print_int !(ball.speed).x;
+    print_int !l_x;
     print_newline ()
-  done
+  done*)
 ;;
