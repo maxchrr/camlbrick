@@ -928,46 +928,26 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
     @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
-  
   let balls : t_ball list ref = ref game.balls in
 
   while !balls <> [] do
     let ball : t_ball = List.hd !balls in
 
-    ball_modif_speed (game, ball, !(ball.speed));
-    ball.position := vec2_add(!(ball.position), !(ball.speed));
-    ball_modif_speed (game, ball, { x = 0 ; y = 0 });
-    
+    if !(ball.position).x > game.param.world_width then begin
+      ball_modif_speed (game, ball, make_vec2 (-1, 0));
+      ball.position := vec2_add(!(ball.position), !(ball.speed))
+    end else if !(ball.position).y > (game.param.world_empty_height + game.param.world_bricks_height) then begin
+      ball_modif_speed (game, ball, make_vec2 (0, 1));
+      ball.position := vec2_add(!(ball.position), !(ball.speed))
+    end else begin
+      ball_modif_speed (game, ball, make_vec2 (1, 0));
+      ball.position := vec2_add(!(ball.position), !(ball.speed))
+    end;
+
     print_string "position x actuelle =";
     print_int !(ball.position).x;
     print_newline ();
 
     balls := List.tl !balls
   done
-  
-  (*
-  let balls : t_ball list = game.balls in
-  
-  for i = 0 to List.length balls - 1 do
-    let ball : t_ball = List.hd balls in
-
-    ball_modif_speed (
-      game,
-      ball,
-      { x = speed_get game ; y = speed_get game}
-    );
-
-    ball.position = (ref !(ball.speed).x, ref !(ball.speed).y);
-
-    ball_modif_speed (
-      game,
-      ball,
-      { x = 0 ; y = 0}
-    );
-    
-    let (l_x,l_y) : int ref * int ref = ball.position in  
-    print_string "vitesse actuelle =";
-    print_int !l_x;
-    print_newline ()
-  done*)
 ;;
