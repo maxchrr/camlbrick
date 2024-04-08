@@ -653,8 +653,8 @@ let ball_modif_speed_sign (game, ball, sv : t_camlbrick * t_ball * t_vec2) : uni
   @return si le point est dans le cercle
 *)
 let is_inside_circle (cx, cy, rad, x, y : int * int * int * int * int) : bool =
-  let fst_point : float = Float.pow (float_of_int (x - cx)) 2. in
-  let snd_point : float = float_of_int (cy - y) in
+  let fst_point : float = float_of_int (x - cx) ** 2. in
+  let snd_point : float = float_of_int (y - cy) ** 2. in
 
   Float.sqrt (fst_point +. snd_point) < (float_of_int rad)
 ;;
@@ -697,16 +697,36 @@ let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : uni
   ()
 ;;
 
-(* lire l'énoncé choix à faire *)
+(**
+  Vérifie si une balle touche un des sommets des briques.
+
+  @author Max Charrier
+  @param game partie en cours
+  @param ball balle courante
+  @param i
+  @param j
+  @return si touché ou non
+*)
 let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
   (* Itération 3 *)
   false
 ;;
 
-(* lire l'énoncé choix à faire *)
+(**
+  Vérifie si une balle touche une des arrêtes des briques.
+
+  @author Max Charrier
+  @param game partie en cours
+  @param ball balle courante
+  @param i
+  @param j
+  @return si touché ou non
+*)
 let ball_hit_side_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
-  (* Itération 3 *)
-  false
+  let ball_position = !(ball.position) in
+  let ball_radius = ball_size_pixel (game, ball) in
+
+  is_inside_circle (ball_position.x, ball_position.y, ball_radius, i, j)
 ;;
 
 let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
@@ -950,11 +970,14 @@ let animate_action (game : t_camlbrick) : unit =
   while !balls <> [] do
     let ball : t_ball = List.hd !balls in
 
-    print_string "position x=";
+    (*print_string "position x=";
     print_int !(ball.position).x;
     print_newline ();
     print_string "position y=";
     print_int !(ball.position).y;
+    print_newline ();*)
+
+    print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
     print_newline ();
 
     if !(ball.position).x <= 0 then begin
