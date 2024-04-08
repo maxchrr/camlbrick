@@ -296,7 +296,7 @@ let make_camlbrick () : t_camlbrick =
     };
     balls = [{
       position = ref (make_vec2 (400, 750));
-      speed = ref (make_vec2 (0, -1));
+      speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
     }];
     speed = ref 0
@@ -928,6 +928,9 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
     @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
+  let rand (min, max: int * int) : int =
+    min + Random.int (max - min + 1);
+  in
   let balls : t_ball list ref = ref game.balls in
 
   while !balls <> [] do
@@ -940,17 +943,17 @@ let animate_action (game : t_camlbrick) : unit =
     print_int !(ball.position).y;
     print_newline ();
 
-    if !(ball.position).x > (game.param.world_width / 2) then begin
-      ball_modif_speed (game, ball, make_vec2 (-1, 0));
+    if !(ball.position).x <= 0 then begin
+      ball_modif_speed_sign (game, ball, make_vec2 (-1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
-    end else if !(ball.position).y < 0 then begin
-      ball_modif_speed (game, ball, make_vec2 (1, 0));
+    end else if !(ball.position).x >= game.param.world_width then begin
+      ball_modif_speed_sign (game, ball, make_vec2 (-1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
-    end else if !(ball.position).y > (game.param.world_empty_height + game.param.world_bricks_height) then begin
-      ball_modif_speed (game, ball, make_vec2 (0, 1));
+    end else if !(ball.position).y <= 0 then begin
+      ball_modif_speed_sign (game, ball, make_vec2 (0, -1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else begin
-      ball_modif_speed (game, ball, make_vec2 (1, 1));
+      ball_modif_speed (game, ball, make_vec2 (rand (-10, 10), rand (-10, 0)));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end;
 
