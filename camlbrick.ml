@@ -933,8 +933,18 @@ let animate_action (game : t_camlbrick) : unit =
   while !balls <> [] do
     let ball : t_ball = List.hd !balls in
 
-    if !(ball.position).x > game.param.world_width then begin
+    print_string "position x=";
+    print_int !(ball.position).x;
+    print_newline ();
+    print_string "position y=";
+    print_int !(ball.position).y;
+    print_newline ();
+
+    if !(ball.position).x > ( game.param.world_width / 2) then begin
       ball_modif_speed (game, ball, make_vec2 (-1, 0));
+      ball.position := vec2_add(!(ball.position), !(ball.speed))
+    end else if !(ball.position) < 0 then begin
+      ball_modif_speed (game, ball, make_vec2 (1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else if !(ball.position).y > (game.param.world_empty_height + game.param.world_bricks_height) then begin
       ball_modif_speed (game, ball, make_vec2 (0, 1));
@@ -943,10 +953,6 @@ let animate_action (game : t_camlbrick) : unit =
       ball_modif_speed (game, ball, make_vec2 (1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end;
-
-    print_string "position x actuelle =";
-    print_int !(ball.position).x;
-    print_newline ();
 
     balls := List.tl !balls
   done
