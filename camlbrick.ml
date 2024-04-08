@@ -675,9 +675,21 @@ let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : 
   x >= x1 && x <= x2 && y >= y1 && y <= y2
 ;;
 
+(**
+  Renvoie une nouvelle liste sans les balles qui dépassent la zone de rebond.
+
+  @author Max Charrier
+  @param game partie en cours
+  @param balls balle de la partie
+  @return balle restante
+*)
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
-  (* Itération 3 *)
-  balls
+  let fst_ball : t_ball = List.hd balls in
+
+  if !(fst_ball.position).y >= game.param.world_width then
+    List.tl balls
+  else
+    balls
 ;;
 
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
@@ -932,6 +944,8 @@ let animate_action (game : t_camlbrick) : unit =
     min + Random.int (max - min + 1);
   in
   let balls : t_ball list ref = ref game.balls in
+  (* On supprime les balles qui sortent *)
+  balls := ball_remove_out_of_border (game, !balls);
 
   while !balls <> [] do
     let ball : t_ball = List.hd !balls in
