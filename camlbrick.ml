@@ -940,17 +940,17 @@ let animate_action (game : t_camlbrick) : unit =
     print_int !(ball.position).y;
     print_newline ();
 
-    if !(ball.position).x > ( game.param.world_width / 2) then begin
+    if !(ball.position).x > (game.param.world_width / 2) then begin
       ball_modif_speed (game, ball, make_vec2 (-1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
-    end else if !(ball.position) < 0 then begin
+    end else if !(ball.position).y < 0 then begin
       ball_modif_speed (game, ball, make_vec2 (1, 0));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else if !(ball.position).y > (game.param.world_empty_height + game.param.world_bricks_height) then begin
       ball_modif_speed (game, ball, make_vec2 (0, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else begin
-      ball_modif_speed (game, ball, make_vec2 (1, 0));
+      ball_modif_speed (game, ball, make_vec2 (1, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end;
 
