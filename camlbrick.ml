@@ -1006,7 +1006,7 @@ let animate_action (game : t_camlbrick) : unit =
       ));
       print_newline ();
       brick_hit (game, pos_x, pos_y);
-      
+      ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
     );
 
     (* Bord latéral gauche *)
