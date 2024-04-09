@@ -244,8 +244,7 @@ type t_camlbrick =
     matrix : t_brick_kind array array;
     paddle : t_paddle;
     balls : t_ball list;
-    speed : int ref;
-    count : int ref
+    speed : int ref
   }
 ;;
 
@@ -298,17 +297,16 @@ let make_camlbrick () : t_camlbrick =
     balls = [
       {
         position = ref (make_vec2 (400, 750));
-        speed = ref (make_vec2 (-1, -1));
+        speed = ref (make_vec2 (-3, -3));
         size = BS_MEDIUM
       };
       {
         position = ref (make_vec2 (500, 750));
-        speed = ref (make_vec2 (1, -1));
+        speed = ref (make_vec2 (2, -2));
         size = BS_BIG
       };
     ];
-    speed = ref 0;
-    count = ref 0
+    speed = ref 5
   }
 ;;
 
@@ -986,6 +984,9 @@ let animate_action (game : t_camlbrick) : unit =
     (*print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
     print_newline ();*)
 
+    print_int (speed_get game);
+    print_newline ();
+
     if !(ball.position).x <= 0 then begin
       ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
@@ -995,15 +996,8 @@ let animate_action (game : t_camlbrick) : unit =
     end else if !(ball.position).y <= 0 then begin
       ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
-    end else begin
-      if !(game.count) = 100 then begin
-        ball_modif_speed (game, ball, !(ball.speed));
-        game.count := 0
-      end else begin
-        game.count := !(game.count) + 1;
-        ball.position := vec2_add(!(ball.position), !(ball.speed))
-      end
-    end;
+    end else 
+        ball.position := vec2_add(!(ball.position), !(ball.speed));
 
     balls := List.tl !balls
   done
