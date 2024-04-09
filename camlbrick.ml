@@ -299,12 +299,12 @@ let make_camlbrick () : t_camlbrick =
         position = ref (make_vec2 (400, 750));
         speed = ref (make_vec2 (-3, -3));
         size = BS_MEDIUM
-      };
+      }(*;
       {
         position = ref (make_vec2 (500, 750));
         speed = ref (make_vec2 (2, -2));
         size = BS_BIG
-      };
+      };*)
     ];
     speed = ref 5
   }
@@ -708,6 +708,7 @@ let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : uni
   Vérifie si une balle touche un des sommets des briques.
 
   @author Max Charrier
+  @author Paul Ourliac
   @param game partie en cours
   @param ball balle courante
   @param i
@@ -715,8 +716,14 @@ let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : uni
   @return si touché ou non
 *)
 let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
-  (* Itération 3 *)
-  false
+  let param : t_camlbrick_param = param_get game in
+  let ball_position = !(ball.position) in
+  let ball_radius = ball_size_pixel (game, ball) in
+  let (pos_x,pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in 
+  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y) 
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y) 
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + param.brick_height) 
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width,  pos_y + param.brick_height)
 ;;
 
 (**
@@ -966,6 +973,7 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
     @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
+  let param : t_camlbrick_param = param_get game in
   let balls : t_ball list ref = ref game.balls in
   (* On supprime les balles qui sortent *)
   balls := ball_remove_out_of_border (game, !balls);
@@ -980,8 +988,26 @@ let animate_action (game : t_camlbrick) : unit =
     print_int !(ball.position).y;
     print_newline ();*)
 
-    (*print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
-    print_newline ();*)
+    let pos_x : int = !(ball.position).x / param.brick_width in
+    let pos_y : int = !(ball.position).y / param.brick_height in
+    if pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1 then (
+      print_string "x=";
+      print_int pos_x;
+      print_string " y=";
+      print_int pos_y;
+      print_string " value=";
+      print_string (string_of_bool (
+        ball_hit_corner_brick (
+          game,
+          ball,
+          pos_x,
+          pos_y
+        )
+      ));
+      print_newline ();
+      brick_hit (game, pos_x, pos_y);
+      
+    );
 
     (* Bord latéral gauche *)
     if !(ball.position).x <= 0 then begin
