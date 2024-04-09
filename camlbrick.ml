@@ -890,7 +890,7 @@ let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int)
 ;;
 
 (**
-  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom2 de la zone du menu.
+  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom1 de la zone du menu.
 *)
 let custom1_text () : string =
   (* Iteration 4 *)
