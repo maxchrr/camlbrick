@@ -244,7 +244,8 @@ type t_camlbrick =
     matrix : t_brick_kind array array;
     paddle : t_paddle;
     balls : t_ball list;
-    speed : int ref
+    speed : int ref;
+    count : int ref
   }
 ;;
 
@@ -289,17 +290,18 @@ let param_get (game : t_camlbrick) : t_camlbrick_param =
 let make_camlbrick () : t_camlbrick =
   {
     param = make_camlbrick_param ();
-    matrix = Array.make_matrix 20 31 BK_empty;
+    matrix = Array.make_matrix 20 30 BK_empty;
     paddle =  {
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
       position = ref (make_vec2 (400, 750));
-      speed = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (-1, -1));
       size = BS_MEDIUM
     }];
-    speed = ref 0
+    speed = ref 0;
+    count = ref 0
   }
 ;;
 
@@ -679,16 +681,18 @@ let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : 
   Renvoie une nouvelle liste sans les balles qui dépassent la zone de rebond.
 
   @author Max Charrier
+  @author Paul Ourliac
   @param game partie en cours
   @param balls balle de la partie
   @return balle restante
 *)
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
   let fst_ball : t_ball = List.hd balls in
-
-  if !(fst_ball.position).y >= game.param.world_width then
+  let max_size : int = game.param.world_bricks_height + game.param.world_empty_height - game.param.paddle_init_height in
+  
+  if !(fst_ball.position).y >= max_size then begin
     List.tl balls
-  else
+  end else
     balls
 ;;
 
@@ -977,21 +981,26 @@ let animate_action (game : t_camlbrick) : unit =
     print_int !(ball.position).y;
     print_newline ();*)
 
-    print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
-    print_newline ();
-
+    (*print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
+    print_newline ();*)
+    
     if !(ball.position).x <= 0 then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (-1, 0));
+      ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else if !(ball.position).x >= game.param.world_width then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (-1, 0));
+      ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else if !(ball.position).y <= 0 then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (0, -1));
+      ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
     end else begin
-      ball_modif_speed (game, ball, make_vec2 (rand (-10, 10), rand (-10, 0)));
-      ball.position := vec2_add(!(ball.position), !(ball.speed))
+      if !(game.count) = 100 then begin
+        ball_modif_speed (game, ball, !(ball.speed));
+        game.count := 0
+      end else begin
+        game.count := !(game.count) + 1;
+        ball.position := vec2_add(!(ball.position), !(ball.speed))
+      end
     end;
 
     balls := List.tl !balls
