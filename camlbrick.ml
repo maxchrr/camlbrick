@@ -295,11 +295,18 @@ let make_camlbrick () : t_camlbrick =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    balls = [{
-      position = ref (make_vec2 (400, 750));
-      speed = ref (make_vec2 (-1, -1));
-      size = BS_MEDIUM
-    }];
+    balls = [
+      {
+        position = ref (make_vec2 (400, 750));
+        speed = ref (make_vec2 (-1, -1));
+        size = BS_MEDIUM
+      };
+      {
+        position = ref (make_vec2 (300, 850));
+        speed = ref (make_vec2 (1, -1));
+        size = BS_BIG
+      };
+    ];
     speed = ref 0;
     count = ref 0
   }
@@ -962,9 +969,6 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
     @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
-  let rand (min, max: int * int) : int =
-    min + Random.int (max - min + 1);
-  in
   let balls : t_ball list ref = ref game.balls in
   (* On supprime les balles qui sortent *)
   balls := ball_remove_out_of_border (game, !balls);
