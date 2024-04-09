@@ -297,7 +297,7 @@ let make_camlbrick () : t_camlbrick =
     balls = [
       {
         position = ref (make_vec2 (400, 750));
-        speed = ref (make_vec2 (-3, -3));
+        speed = ref (make_vec2 (0, -3));
         size = BS_MEDIUM
       }(*;
       {
@@ -719,11 +719,12 @@ let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) 
   let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
   let ball_radius = ball_size_pixel (game, ball) in
-  let (pos_x,pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in 
-  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y) 
-  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y) 
-  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + param.brick_height) 
-  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width,  pos_y + param.brick_height)
+  let (pos_x, pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in
+
+  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y)
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y)
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + param.brick_height)
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + param.brick_height)
 ;;
 
 (**
@@ -975,39 +976,23 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
 let animate_action (game : t_camlbrick) : unit =
   let param : t_camlbrick_param = param_get game in
   let balls : t_ball list ref = ref game.balls in
+
   (* On supprime les balles qui sortent *)
   balls := ball_remove_out_of_border (game, !balls);
 
   while !balls <> [] do
+    (* On récupère la première balle *)
     let ball : t_ball = List.hd !balls in
-
-    (*print_string "position x=";
-    print_int !(ball.position).x;
-    print_newline ();
-    print_string "position y=";
-    print_int !(ball.position).y;
-    print_newline ();*)
-
     let pos_x : int = !(ball.position).x / param.brick_width in
     let pos_y : int = !(ball.position).y / param.brick_height in
-    if pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1 then (
-      print_string "x=";
-      print_int pos_x;
-      print_string " y=";
-      print_int pos_y;
-      print_string " value=";
-      print_string (string_of_bool (
-        ball_hit_corner_brick (
-          game,
-          ball,
-          pos_x,
-          pos_y
-        )
-      ));
-      print_newline ();
+
+    (* Collision avec les briques *)
+    if
+      pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1
+    then begin
       brick_hit (game, pos_x, pos_y);
       ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-    );
+    end;
 
     (* Bord latéral gauche *)
     if !(ball.position).x <= 0 then begin
@@ -1025,6 +1010,7 @@ let animate_action (game : t_camlbrick) : unit =
     end else
         ball.position := vec2_add (!(ball.position), !(ball.speed));
 
+    (* On passe à la balle suivante *)
     balls := List.tl !balls
   done
 ;;
