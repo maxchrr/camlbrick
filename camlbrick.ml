@@ -955,7 +955,6 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
   game.speed := xspeed
 ;;
 
-
 (**
     Animation des balles dans la partie en cours.
 
@@ -984,20 +983,21 @@ let animate_action (game : t_camlbrick) : unit =
     (*print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
     print_newline ();*)
 
-    print_int (speed_get game);
-    print_newline ();
-
+    (* Bord latéral gauche *)
     if !(ball.position).x <= 0 then begin
       ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
-      ball.position := vec2_add(!(ball.position), !(ball.speed))
+      ball.position := vec2_add (!(ball.position), !(ball.speed))
+    (* Bord latéral droite *)
     end else if !(ball.position).x >= game.param.world_width then begin
       ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
-      ball.position := vec2_add(!(ball.position), !(ball.speed))
+      ball.position := vec2_add (!(ball.position), !(ball.speed))
+    (* Bord supérieur *)
     end else if !(ball.position).y <= 0 then begin
       ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-      ball.position := vec2_add(!(ball.position), !(ball.speed))
-    end else 
-        ball.position := vec2_add(!(ball.position), !(ball.speed));
+      ball.position := vec2_add (!(ball.position), !(ball.speed))
+    (* Cas par défault (WIP) *)
+    end else
+        ball.position := vec2_add (!(ball.position), !(ball.speed));
 
     balls := List.tl !balls
   done
