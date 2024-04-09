@@ -699,9 +699,49 @@ let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_bal
   List.filter aux balls
 ;;
 
+(**
+  Rebondit si une balle touche la raquette.
+
+  @author Paul Ourliac
+  @author Max Charrier
+  @param game partie en cours
+  @param ball balle courante
+  @param paddle la raquette
+  @return si touché ou non
+*)
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
-  (* Itération 3 *)
-  ()
+  let param : t_camlbrick_param = param_get game in
+  let ball_position = !(ball.position) in
+  (*let paddle_x1 = (param.world_width - param.paddle_init_width) / 2
+  and paddle_x2 = (param.world_width + param.paddle_init_width) / 2
+  and paddle_y1 = (param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10)
+  and paddle_y2 = (param.world_bricks_height + param.world_empty_height - 10)
+  in*)
+  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game)/4 in
+  let paddle_x2 : int = paddle_x1 + param.paddle_init_width in
+  let paddle_y1 : int = 770 in
+  let paddle_y2 : int = 790 in
+
+  print_string "x1=";
+  print_int paddle_x1;
+  print_string " ";
+  print_int (ball_position.x - (param.world_width/2));
+  print_string " x2=";
+  print_int paddle_x2;
+  print_string " ";
+  print_int ball_position.y;
+  print_string " value=";
+  print_string (string_of_bool (is_inside_quad (
+    paddle_x1,
+    paddle_y1,
+    paddle_x2,
+    paddle_y2,
+    ball_position.x - (param.world_width/2),
+    ball_position.y
+  )));
+  print_newline ()
+  (*if is_inside_quad (paddle_x1, paddle_y1, paddle_x2, paddle_y2, ball_position.x, ball_position.y) then
+    ball_modif_speed_sign (game, ball, make_vec2 (-1, -1))*)
 ;;
 
 (**
@@ -987,6 +1027,8 @@ let animate_action (game : t_camlbrick) : unit =
     print_string "position y=";
     print_int !(ball.position).y;
     print_newline ();*)
+
+    ball_hit_paddle (game, ball, game.paddle);
 
     let pos_x : int = !(ball.position).x / param.brick_width in
     let pos_y : int = !(ball.position).y / param.brick_height in
