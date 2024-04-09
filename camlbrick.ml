@@ -687,13 +687,11 @@ let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : 
   @return balle restante
 *)
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
-  let fst_ball : t_ball = List.hd balls in
-  let max_size : int = game.param.world_bricks_height + game.param.world_empty_height - game.param.paddle_init_height in
-  
-  if !(fst_ball.position).y >= max_size then begin
-    List.tl balls
-  end else
-    balls
+  let aux (ball : t_ball) : bool =
+    !(ball.position).y <= 800
+  in
+
+  List.filter aux balls
 ;;
 
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
@@ -983,7 +981,7 @@ let animate_action (game : t_camlbrick) : unit =
 
     (*print_string (string_of_bool (ball_hit_side_brick (game, ball, 0, 0)));
     print_newline ();*)
-    
+
     if !(ball.position).x <= 0 then begin
       ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
       ball.position := vec2_add(!(ball.position), !(ball.speed))
