@@ -28,6 +28,8 @@ test: camlbrick.cmo CPtest.cmo
 	ocaml tests_iteration1.ml
 	@echo "\nIteration 2"
 	ocaml tests_iteration2.ml
+	@echo "\nIteration 3"
+	ocaml tests_iteration3.ml
 	@make clean
 
 # Cible pour générer la documentation HTML
