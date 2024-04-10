@@ -388,21 +388,21 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   @param game partie en cours d'exécution
   @param i partie horizontal de la matrice de brique
   @param j partie vertical de la matrice de brique
+  @return type de brique
 *)
-let brick_hit (game, i, j : t_camlbrick * int * int) : unit =
+let brick_hit (game, i, j : t_camlbrick * int * int) : t_brick_kind =
   let brick : t_brick_kind = brick_get (game, i, j) in
 
   if brick = BK_simple then
-    game.matrix.(i).(j) <- BK_empty
+    BK_empty
   else if brick = BK_double then
-    game.matrix.(i).(j) <- BK_simple
-  else if brick = BK_bonus then begin
-    game.matrix.(i).(j) <- BK_empty;
-    (* Action à réaliser -> deux balles par exemple *)
-  end else if brick = BK_block then
-    game.matrix.(i).(j) <- BK_block
+    BK_simple
+  else if brick = BK_bonus then
+    BK_empty
+  else if brick = BK_block then
+    BK_block
   else
-    ()
+    BK_empty
 ;;
 
 (**
@@ -1108,7 +1108,7 @@ let animate_action (game : t_camlbrick) : unit =
           || ball_hit_side_brick(game, ball, pos_x, pos_y)
         then begin
           ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-          brick_hit (game, pos_x, pos_y)
+          game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y)
         end
       );
     end;
