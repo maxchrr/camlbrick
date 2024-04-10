@@ -1118,14 +1118,9 @@ let animate_action (game : t_camlbrick) : unit =
           (* S'il s'agit d'une brique bonus *)
           if brick_get (game, pos_x, pos_y) = BK_bonus then begin
             (* On détruit les 2 briques adjacentes *)
-            game.matrix.(pos_x + 1).(pos_y) <- brick_hit (game, pos_x + 1, pos_y);
-            game.matrix.(pos_x + 2).(pos_y) <- brick_hit (game, pos_x + 2, pos_y);
-            game.matrix.(pos_x - 1).(pos_y) <- brick_hit (game, pos_x - 1, pos_y);
-            game.matrix.(pos_x - 2).(pos_y) <- brick_hit (game, pos_x - 2, pos_y);
-            game.matrix.(pos_x).(pos_y + 1) <- brick_hit (game, pos_x, pos_y + 1);
-            game.matrix.(pos_x).(pos_y + 2) <- brick_hit (game, pos_x, pos_y + 2);
-            game.matrix.(pos_x).(pos_y - 1) <- brick_hit (game, pos_x, pos_y - 1);
-            game.matrix.(pos_x).(pos_y - 2) <- brick_hit (game, pos_x, pos_y - 2)
+            if pos_x - 1 <= Array.length game.matrix - 1 then
+              game.matrix.(pos_x - 1).(pos_y) <- brick_hit (game, pos_x - 1, pos_y);
+              game.matrix.(pos_x - 2).(pos_y) <- brick_hit (game, pos_x - 2, pos_y)
           end else
             game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y)
         end
