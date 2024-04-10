@@ -496,7 +496,6 @@ let paddle_move_right (game : t_camlbrick) : unit =
 
   @author Axel De Les Champs--Vieira
   @author Max Charrier
-  @author Paul Ourliac
   @param game partie en cours d'exécution
   @return s'il y a une balle ou non dans la partie.
 *)
@@ -712,34 +711,34 @@ let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_bal
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
   let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
-  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game)/4
-  and paddle_x2 : int = (paddle_x game - (paddle_size_pixel game)/4 ) + param.paddle_init_width
+  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game) / 4
+  and paddle_x2 : int = (paddle_x game - (paddle_size_pixel game) / 4) + param.paddle_init_width
   and paddle_y1 : int = param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10
   and paddle_y2 : int = param.world_bricks_height + param.world_empty_height - 10
   in
 
   if
-    is_inside_quad (paddle_x1, paddle_y1, paddle_x2 - 4 *20 , paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+    is_inside_quad (paddle_x1, paddle_y1, paddle_x2 - 4 * 20 , paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
     ball_modif_speed (game, ball, make_vec2 (-2, -1))
   end else if
-    is_inside_quad (paddle_x1 + 1 *20, paddle_y1, paddle_x2 - 3 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+    is_inside_quad (paddle_x1 + 1 * 20, paddle_y1, paddle_x2 - 3 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
     ball_modif_speed (game, ball, make_vec2 (-1, -1))
   end else if
-    is_inside_quad (paddle_x1 + 2 * 20, paddle_y1, paddle_x2 - 2 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+    is_inside_quad (paddle_x1 + 2 * 20, paddle_y1, paddle_x2 - 2 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
     ball_modif_speed (game, ball, make_vec2 (0, -1))
   end else if
-    is_inside_quad (paddle_x1 + 3 *20, paddle_y1, paddle_x2 - 1 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+    is_inside_quad (paddle_x1 + 3 * 20, paddle_y1, paddle_x2 - 1 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
     ball_modif_speed(game, ball, make_vec2 (1, -1))
   end else if
-    is_inside_quad (paddle_x1 + 4 *20, paddle_y1, paddle_x2 , paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+    is_inside_quad (paddle_x1 + 4 * 20, paddle_y1, paddle_x2 , paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
     ball_modif_speed (game, ball, make_vec2 (2, -1))
@@ -761,7 +760,9 @@ let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) 
   let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
   let ball_radius = ball_size_pixel (game, ball) in
-  let (pos_x, pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in
+  let (pos_x, pos_y) : int * int =
+    (i * param.brick_width, j * param.brick_height)
+  in
 
   is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y)
   || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y)
@@ -784,11 +785,14 @@ let ball_hit_side_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : 
   let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
   let ball_radius = ball_size_pixel (game, ball) in
-  let (pos_x, pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in
-  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + (param.brick_width/2), pos_y)
+  let (pos_x, pos_y) : int * int =
+    (i * param.brick_width, j * param.brick_height)
+  in
+
+  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + (param.brick_width / 2), pos_y)
   || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + param.brick_height)
-  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + (param.brick_height/2))
-  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + (param.brick_height/2))
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + (param.brick_height / 2))
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + (param.brick_height / 2))
 ;;
 
 let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
@@ -797,8 +801,12 @@ let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
 ;;
 
 (**
-  Appelée par l'interface graphique avec le jeu en argument et la position de la souris dans la fenêtre lorsqu'elle se déplace.
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+  Appelée par l'interface graphique avec le jeu en argument et la position de
+  la souris dans la fenêtre lorsqu'elle se déplace.
+
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
   @param x l'abscisse de la position de la souris
@@ -819,7 +827,10 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
 (**
   Appelée par l'interface graphique avec le jeu en argument et la position
   de la souris dans la fenêtre lorsqu'un bouton est enfoncé.
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
   @param button numero du bouton de la souris enfoncé
@@ -827,6 +838,7 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
+  (*
   print_string "Mouse pressed: ";
   print_string " button=";
   print_int button;
@@ -835,12 +847,17 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   print_string " y=";
   print_int y;
   print_newline ()
+  *)
+  ()
 ;;
 
 (**
   Appelée par l'interface graphique avec le jeu en argument et la position
   de la souris dans la fenêtre lorsqu'un bouton est relaché.
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
   @param button numero du bouton de la souris relaché
@@ -848,6 +865,7 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   @param y l'ordonnée de la position du relachement
 *)
 let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * int) : unit =
+  (*
   print_string "Mouse released: ";
   print_string " button=";
   print_int button;
@@ -856,15 +874,21 @@ let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * i
   print_string " y=";
   print_int y;
   print_newline ()
+  *)
+  ()
 ;;
 
 (**
   Appelée par l'interface graphique lorsqu'une touche du clavier est appuyée.
-  Les arguments sont le jeu en cours, la touche enfoncé sous la forme d'une chaine et sous forme d'un code spécifique à labltk.
+  Les arguments sont le jeu en cours, la touche enfoncé sous la forme d'une
+  chaine et sous forme d'un code spécifique à labltk.
 
-  Le code fourni initialement permet juste d'afficher les touches appuyées au clavier afin de pouvoir les identifiées facilement dans nos traitements.
+  Le code fourni initialement permet juste d'afficher les touches appuyées au
+  clavier afin de pouvoir les identifiées facilement dans nos traitements.
 
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
   @param keyString nom de la touche appuyée
@@ -911,11 +935,15 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
 
 (**
   Appelée par l'interface graphique lorsqu'une touche du clavier est relachée.
-  Les arguments sont le jeu en cours, la touche relachée sous la forme d'une chaine et sous forme d'un code spécifique à labltk.
+  Les arguments sont le jeu en cours, la touche relachée sous la forme d'une
+  chaine et sous forme d'un code spécifique à labltk.
 
-  Le code fourni initialement permet juste d'afficher les touches appuyées au clavier afin de pouvoir les identifiées facilement dans nos traitements.
+  Le code fourni initialement permet juste d'afficher les touches appuyées au
+  clavier afin de pouvoir les identifiées facilement dans nos traitements.
 
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
   @param keyString nom de la touche relachée
@@ -933,7 +961,8 @@ let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int)
 ;;
 
 (**
-  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom1 de la zone du menu.
+  Cette fonction est utilisée par l'interface graphique pour connaitre
+  l'information à afficher dans la zone Custom1 de la zone du menu.
 *)
 let custom1_text () : string =
   (* Iteration 4 *)
@@ -941,7 +970,8 @@ let custom1_text () : string =
 ;;
 
 (**
-  Cette fonction est utilisée par l'interface graphique pour connaitre l'information à afficher dans la zone Custom2 de la zone du menu.
+  Cette fonction est utilisée par l'interface graphique pour connaitre
+  l'information à afficher dans la zone Custom2 de la zone du menu.
 *)
 let custom2_text () : string =
   (* Iteration 4 *)
@@ -949,10 +979,12 @@ let custom2_text () : string =
 ;;
 
 (**
-  Cette fonction est appelée par l'interface graphique lorsqu'on clique sur le bouton de la zone de menu et que ce bouton affiche "Start".
+  Cette fonction est appelée par l'interface graphique lorsqu'on clique sur le
+  bouton de la zone de menu et que ce bouton affiche "Start".
 
-
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
 *)
@@ -964,7 +996,9 @@ let start_onclick (game : t_camlbrick) : unit=
   Appelée par l'interface graphique lorsqu'on clique sur le bouton
   de la zone de menu et que ce bouton affiche "Stop".
 
-  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que cela aura un impact sur les performances si vous dosez mal les temps de calcul.
+  Vous pouvez réaliser des traitements spécifiques, mais comprenez bien que
+  cela aura un impact sur les performances si vous dosez mal les temps de
+  calcul.
 
   @param game la partie en cours
 *)
@@ -976,7 +1010,8 @@ let stop_onclick (game : t_camlbrick) : unit =
   Appelée par l'interface graphique pour connaitre la valeur
   du slider Speed dans la zone du menu.
 
-  Vous pouvez donc renvoyer une valeur selon votre désir afin d'offrir la possibilité d'interagir avec le joueur.
+  Vous pouvez donc renvoyer une valeur selon votre désir afin d'offrir la
+  possibilité d'interagir avec le joueur.
 
   @param game partie en cours d'exécution
   @return vitesse du slider speed dans le menu contextuel.
@@ -986,7 +1021,8 @@ let speed_get (game : t_camlbrick) : int =
 ;;
 
 (**
-  Appelée par l'interface graphique pour indiquer que le slide Speed dans la zone de menu a été modifiée.
+  Appelée par l'interface graphique pour indiquer que le slide Speed dans la
+  zone de menu a été modifiée.
 
   Ainsi, vous pourrez réagir selon le joueur.
 
@@ -999,14 +1035,14 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
 ;;
 
 (**
-    Animation des balles dans la partie en cours.
+  Animation des balles dans la partie en cours.
 
-    Appelée par l'interface graphique à chaque frame du jeu vidéo.
-    Mettre ici tout le code qui permet de montrer l'évolution du jeu.
+  Appelée par l'interface graphique à chaque frame du jeu vidéo.
+  Mettre ici tout le code qui permet de montrer l'évolution du jeu.
 
-    @author Paul Ourliac
-    @author Max Charrier
-    @param game partie en cours d'exécution
+  @author Paul Ourliac
+  @author Max Charrier
+  @param game partie en cours d'exécution
 *)
 let animate_action (game : t_camlbrick) : unit =
   let param : t_camlbrick_param = param_get game in
@@ -1029,13 +1065,17 @@ let animate_action (game : t_camlbrick) : unit =
       pos_x <= Array.length game.matrix - 1
       && pos_y <= Array.length game.matrix.(0) - 1
     then begin
-      if brick_get(game, pos_x,pos_y) <> BK_empty then begin 
-        if ball_hit_corner_brick(game, ball, pos_x, pos_y) || ball_hit_side_brick(game, ball, pos_x, pos_y) then (
+      (* Vérification de s'il y a une brique *)
+      if brick_get (game, pos_x,pos_y) <> BK_empty then (
+        if
+          ball_hit_corner_brick (game, ball, pos_x, pos_y)
+          || ball_hit_side_brick(game, ball, pos_x, pos_y)
+        then begin
           ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
           brick_hit (game, pos_x, pos_y)
-        )
-        end;
-      end;
+        end
+      );
+    end;
 
     (* Bord latéral gauche *)
     if !(ball.position).x <= 0 then begin
