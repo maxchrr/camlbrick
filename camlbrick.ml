@@ -773,6 +773,7 @@ let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) 
   Vérifie si une balle touche une des arrêtes des briques.
 
   @author Max Charrier
+  @author Paul Ourliac
   @param game partie en cours
   @param ball balle courante
   @param i
@@ -780,10 +781,20 @@ let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) 
   @return si touché ou non
 *)
 let ball_hit_side_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
+  let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
   let ball_radius = ball_size_pixel (game, ball) in
-
-  is_inside_circle (ball_position.x, ball_position.y, ball_radius, i, j)
+  let (pos_x, pos_y) : int * int = (i * param.brick_width, j * param.brick_height) in
+  print_string("pos x : ");
+  print_int(pos_x);
+  print_newline();
+  print_string("pos mid");
+  print_int(pos_x + (param.brick_width/2));
+  print_newline();
+  is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + (param.brick_width/2), pos_y)
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + param.brick_height)
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x, pos_y + (param.brick_height/2))
+  || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + (param.brick_height/2))
 ;;
 
 let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
@@ -1014,20 +1025,78 @@ let animate_action (game : t_camlbrick) : unit =
     (* On récupère la première balle *)
     let ball : t_ball = List.hd !balls in
     let pos_x : int = !(ball.position).x / param.brick_width in
-    let pos_y : int = !(ball.position).y / param.brick_height in
+    let pos_y : int = (!(ball.position).y / param.brick_height ) - 1 in
 
     (* Collision avec la raquette *)
     ball_hit_paddle (game, ball, game.paddle);
 
     (* Collision avec les briques *)
     if
-      pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1
-    then begin
+      pos_x <= Array.length game.matrix -1 && pos_y <= Array.length game.matrix.(0) - 1 
+    then (
+      print_string("ici");
+      print_newline();
       if brick_get (game, pos_x, pos_y) <> BK_empty then (
-        ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
-      );
-      brick_hit (game, pos_x, pos_y)
-    end;
+        if
+          ball_hit_corner_brick(game,ball,pos_x,pos_y + 1) || ball_hit_side_brick(game,ball,pos_x ,pos_y)
+        then begin
+          print_string("cas 1 ");
+          print_newline ();
+          if brick_get (game, pos_x, pos_y) <> BK_empty then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
+          );
+          brick_hit (game, pos_x, pos_y)
+        end else if
+          ball_hit_corner_brick(game,ball,pos_x + 1,pos_y) || ball_hit_side_brick(game,ball,pos_x + 1,pos_y)
+        then begin
+          print_string("cas 2 ");
+          print_newline ();
+          if brick_get (game, pos_x + 1, pos_y) <> BK_empty then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+          );
+          brick_hit (game, pos_x + 1, pos_y)
+        end else if
+          ball_hit_corner_brick(game,ball,pos_x - 1 ,pos_y) || ball_hit_side_brick(game,ball,pos_x - 1 ,pos_y)
+        then begin
+          print_string("cas 3 ");
+          print_newline ();
+          if brick_get (game, pos_x - 1, pos_y) <> BK_empty then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+          );
+          brick_hit (game, pos_x - 1, pos_y)
+        end else if
+          ball_hit_corner_brick(game,ball,pos_x,pos_y - 1) || ball_hit_side_brick(game,ball,pos_x - 1,pos_y - 1)
+        then begin
+          print_string("cas 4 ");
+          print_newline ();
+          if brick_get (game, pos_x - 1, pos_y  - 1) <> BK_empty then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+          );
+          brick_hit (game, pos_x - 1, pos_y  - 1)
+        end else if
+          ball_hit_corner_brick(game,ball,pos_x + 1,pos_y - 1) || ball_hit_side_brick(game,ball,pos_x + 1,pos_y - 1)
+        then begin
+          print_string("cas 5 ");
+          print_newline ();
+          if brick_get (game, pos_x + 1, pos_y - 1) <> BK_empty  then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+            );
+          brick_hit (game, pos_x + 1, pos_y - 1)
+        end else if
+          ball_hit_corner_brick(game,ball,pos_x - 1,pos_y - 1) || ball_hit_side_brick(game,ball,pos_x ,pos_y - 1)
+        then begin
+          print_string("cas 6 ");
+          print_newline ();
+          if brick_get (game, pos_x, pos_y - 1) <> BK_empty then (
+            ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+          );
+          brick_hit (game, pos_x, pos_y - 1)
+        end else (
+          print_string "default";
+          print_newline ();
+        )
+      )
+    );
 
     (* Bord latéral gauche *)
     if !(ball.position).x <= 0 then begin
