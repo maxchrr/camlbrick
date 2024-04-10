@@ -1016,12 +1016,17 @@ let animate_action (game : t_camlbrick) : unit =
     let pos_x : int = !(ball.position).x / param.brick_width in
     let pos_y : int = !(ball.position).y / param.brick_height in
 
+    (* Collision avec la raquette *)
+    ball_hit_paddle (game, ball, game.paddle);
+
     (* Collision avec les briques *)
     if
       pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1
     then begin
-      brick_hit (game, pos_x, pos_y);
-      ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
+      if brick_get (game, pos_x, pos_y) <> BK_empty then (
+        ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+      );
+      brick_hit (game, pos_x, pos_y)
     end;
 
     (* Bord latéral gauche *)
