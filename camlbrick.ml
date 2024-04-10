@@ -1114,15 +1114,7 @@ let animate_action (game : t_camlbrick) : unit =
           || ball_hit_side_brick(game, ball, pos_x, pos_y)
         then begin
           ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-
-          (* S'il s'agit d'une brique bonus *)
-          if brick_get (game, pos_x, pos_y) = BK_bonus then begin
-            (* On détruit les 2 briques adjacentes *)
-            if pos_x - 1 <= Array.length game.matrix - 1 then
-              game.matrix.(pos_x - 1).(pos_y) <- brick_hit (game, pos_x - 1, pos_y);
-              game.matrix.(pos_x - 2).(pos_y) <- brick_hit (game, pos_x - 2, pos_y)
-          end else
-            game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y)
+          game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y)
         end
       );
     end;
