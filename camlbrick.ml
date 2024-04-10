@@ -795,6 +795,15 @@ let ball_hit_side_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : 
   || is_inside_circle (ball_position.x, ball_position.y, ball_radius, pos_x + param.brick_width, pos_y + (param.brick_height / 2))
 ;;
 
+(**
+  Gère les collisions des balles.
+
+  TODO : découper `animate_action` pour le mettre ici.
+
+  @author ...
+  @param game partie en cours
+  @param balls liste des balles en jeu
+*)
 let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
   (* Itération 3 *)
   ()
@@ -1035,6 +1044,34 @@ let speed_change (game, xspeed : t_camlbrick * int) : unit =
 ;;
 
 (**
+  Anime la balle vers une direction.
+
+  @author Max Charrier
+  @param game partie en cours
+  @param ball balle courante
+  @param direction direction souhaitée
+*)
+let animate_ball (game, ball, direction : t_camlbrick * t_ball * t_vec2) : unit =
+  ball_modif_speed_sign (game, ball, direction);
+  ball.position := vec2_add (!(ball.position), !(ball.speed))
+;;
+
+(**
+  Met à jour l'état du jeu.
+
+  Détruit les balles en dehors des limites et vérification de si la partie
+  est gagnée ou perdue.
+
+  @author Max Charrier
+  @param game partie en cours
+  @param ball balle courante
+*)
+let update_gamestate (game, balls : t_camlbrick * t_ball list ref) : unit =
+  (* On supprime les balles qui sortent *)
+  balls := ball_remove_out_of_border (game, !balls);
+;;
+
+(**
   Animation des balles dans la partie en cours.
 
   Appelée par l'interface graphique à chaque frame du jeu vidéo.
@@ -1048,8 +1085,7 @@ let animate_action (game : t_camlbrick) : unit =
   let param : t_camlbrick_param = param_get game in
   let balls : t_ball list ref = ref game.balls in
 
-  (* On supprime les balles qui sortent *)
-  balls := ball_remove_out_of_border (game, !balls);
+  update_gamestate (game, balls);
 
   while !balls <> [] do
     (* On récupère la première balle *)
@@ -1077,20 +1113,23 @@ let animate_action (game : t_camlbrick) : unit =
       );
     end;
 
-    (* Bord latéral gauche *)
-    if !(ball.position).x <= 0 then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
-      ball.position := vec2_add (!(ball.position), !(ball.speed))
-    (* Bord latéral droite *)
-    end else if !(ball.position).x >= game.param.world_width then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (-1, 1));
-      ball.position := vec2_add (!(ball.position), !(ball.speed))
-    (* Bord supérieur *)
-    end else if !(ball.position).y <= 0 then begin
-      ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-      ball.position := vec2_add (!(ball.position), !(ball.speed))
-    (* Cas par défault (WIP) *)
-    end else
+    if
+      !(ball.position).x <= 0
+    then
+      (* Bord latéral gauche *)
+      animate_ball (game, ball, make_vec2 (-1, 1))
+    else if
+      !(ball.position).x >= game.param.world_width
+    then
+      (* Bord latéral droite *)
+      animate_ball (game, ball, make_vec2 (-1, 1))
+    else if
+      !(ball.position).y <= 0
+    then
+      (* Bord supérieur *)
+      animate_ball (game, ball, make_vec2 (1, -1))
+    else
+        (* Cas par défault *)
         ball.position := vec2_add (!(ball.position), !(ball.speed));
 
     (* On passe à la balle suivante *)
