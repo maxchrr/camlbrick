@@ -561,7 +561,7 @@ let ball_get (game, i : t_camlbrick * int) : t_ball =
   Renvoie l'abscisse du centre d'une balle.
 
   @author Axel De Les Champs--Vieira
-  @atuhor Max Charrier
+  @author Max Charrier
   @param game partie en cours d'exécution
   @param ball balle
   @return position en abscisse de la balle
@@ -752,8 +752,8 @@ let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : uni
   @author Paul Ourliac
   @param game partie en cours
   @param ball balle courante
-  @param i
-  @param j
+  @param i partie horizontal de la matrice de brique
+  @param j partie vertical de la matrice de brique
   @return si touché ou non
 *)
 let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
@@ -777,8 +777,8 @@ let ball_hit_corner_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) 
   @author Paul Ourliac
   @param game partie en cours
   @param ball balle courante
-  @param i
-  @param j
+  @param i partie horizontal de la matrice de brique
+  @param j partie vertical de la matrice de brique
   @return si touché ou non
 *)
 let ball_hit_side_brick (game, ball, i, j : t_camlbrick * t_ball * int * int) : bool =
@@ -1036,7 +1036,7 @@ let speed_get (game : t_camlbrick) : int =
   Ainsi, vous pourrez réagir selon le joueur.
 
   @param game partie en cours d'exécution
-  @xspeed vitesse à modifier
+  @param xspeed vitesse à modifier
 *)
 let speed_change (game, xspeed : t_camlbrick * int) : unit =
   (* print_endline ("Change speed : " ^ string_of_int xspeed); *)
