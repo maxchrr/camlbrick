@@ -297,7 +297,7 @@ let make_camlbrick () : t_camlbrick =
     balls = [
       {
         position = ref (make_vec2 (400, 750));
-        speed = ref (make_vec2 (-3, -3));
+        speed = ref (make_vec2 (-1, -1));
         size = BS_MEDIUM
       }(*;
       {
@@ -712,36 +712,38 @@ let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_bal
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
   let param : t_camlbrick_param = param_get game in
   let ball_position = !(ball.position) in
-  (*let paddle_x1 = (param.world_width - param.paddle_init_width) / 2
-  and paddle_x2 = (param.world_width + param.paddle_init_width) / 2
-  and paddle_y1 = (param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10)
-  and paddle_y2 = (param.world_bricks_height + param.world_empty_height - 10)
-  in*)
-  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game)/4 in
-  let paddle_x2 : int = paddle_x1 + param.paddle_init_width in
-  let paddle_y1 : int = 770 in
-  let paddle_y2 : int = 790 in
+  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game)/4 
+  and paddle_x2 : int = (paddle_x game - (paddle_size_pixel game)/4 ) + param.paddle_init_width 
+  and paddle_y1 : int = param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10 
+  and paddle_y2 : int = param.world_bricks_height + param.world_empty_height - 10 
+  in
 
-  print_string "x1=";
-  print_int paddle_x1;
-  print_string " ";
-  print_int (ball_position.x - (param.world_width/2));
-  print_string " x2=";
-  print_int paddle_x2;
-  print_string " ";
-  print_int ball_position.y;
-  print_string " value=";
-  print_string (string_of_bool (is_inside_quad (
-    paddle_x1,
-    paddle_y1,
-    paddle_x2,
-    paddle_y2,
-    ball_position.x - (param.world_width/2),
-    ball_position.y
-  )));
-  print_newline ()
-  (*if is_inside_quad (paddle_x1, paddle_y1, paddle_x2, paddle_y2, ball_position.x, ball_position.y) then
-    ball_modif_speed_sign (game, ball, make_vec2 (-1, -1))*)
+  if
+    is_inside_quad (paddle_x1, paddle_y1, paddle_x2 - 4 *20 , paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+  then begin
+    ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
+    ball_modif_speed (game, ball, make_vec2 (-2, -1))
+  end else if
+    is_inside_quad (paddle_x1 + 1 *20, paddle_y1, paddle_x2 - 3 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+  then begin
+    ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
+    ball_modif_speed (game, ball, make_vec2 (-1, -1))
+  end else if
+    is_inside_quad (paddle_x1 + 2 * 20, paddle_y1, paddle_x2 - 2 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+  then begin
+    ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
+    ball_modif_speed (game, ball, make_vec2 (0, -1))
+  end else if
+    is_inside_quad (paddle_x1 + 3 *20, paddle_y1, paddle_x2 - 1 *20, paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+  then begin
+    ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
+    ball_modif_speed(game, ball, make_vec2 (1, -1))
+  end else if
+    is_inside_quad (paddle_x1 + 4 *20, paddle_y1, paddle_x2 , paddle_y2, ball_position.x - (param.world_width/2), ball_position.y)
+  then begin
+    ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
+    ball_modif_speed (game, ball, make_vec2 (2, -1))
+  end
 ;;
 
 (**
@@ -913,27 +915,15 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   @param keyString nom de la touche relachée
   @param keyCode code entier de la touche relachée
 *)
-let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) =
-
+let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) : unit =
+  (*
   print_string "Key released: ";
   print_string key_string;
   print_string " code=";
   print_int key_code;
   print_newline ()
-
-  (*
-  let left_key_code : int = 65361 in
-  let q_key_code : int = 113 in
-  let right_key_code : int = 65363 in
-  let d_right_code : int = 100 in
-
-  if key_code = left_key_code || key_code = q_key_code then
-    paddle_move_left game
-  else if key_code = right_key_code || key_code = d_right_code then
-    paddle_move_right game
-  else
-    ()
   *)
+  ()
 ;;
 
 (**
@@ -1033,22 +1023,10 @@ let animate_action (game : t_camlbrick) : unit =
     let pos_x : int = !(ball.position).x / param.brick_width in
     let pos_y : int = !(ball.position).y / param.brick_height in
     if pos_x <= Array.length game.matrix - 1 && pos_y <= Array.length game.matrix.(0) - 1 then (
-      print_string "x=";
-      print_int pos_x;
-      print_string " y=";
-      print_int pos_y;
-      print_string " value=";
-      print_string (string_of_bool (
-        ball_hit_corner_brick (
-          game,
-          ball,
-          pos_x,
-          pos_y
-        )
-      ));
-      print_newline ();
-      brick_hit (game, pos_x, pos_y);
-      ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
+      if brick_get(game,pos_x,pos_y) <> BK_empty then (
+        ball_modif_speed_sign (game, ball, make_vec2 (1, -1))
+      );
+      brick_hit (game, pos_x, pos_y)
     );
 
     (* Bord latéral gauche *)
