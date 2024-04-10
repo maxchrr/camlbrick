@@ -297,14 +297,14 @@ let make_camlbrick () : t_camlbrick =
     balls = [
       {
         position = ref (make_vec2 (400, 750));
-        speed = ref (make_vec2 (-1, -1));
+        speed = ref (make_vec2 (-3, -3));
         size = BS_MEDIUM
-      }(*;
+      };
       {
         position = ref (make_vec2 (500, 750));
         speed = ref (make_vec2 (2, -2));
         size = BS_BIG
-      };*)
+      }
     ];
     speed = ref 5
   }
@@ -710,38 +710,44 @@ let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_bal
 *)
 let ball_hit_paddle (game, ball, paddle : t_camlbrick * t_ball * t_paddle) : unit =
   let param : t_camlbrick_param = param_get game in
-  let ball_position = !(ball.position) in
-  let paddle_x1 : int = paddle_x game - (paddle_size_pixel game) / 4
-  and paddle_x2 : int = (paddle_x game - (paddle_size_pixel game) / 4) + param.paddle_init_width
-  and paddle_y1 : int = param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10
-  and paddle_y2 : int = param.world_bricks_height + param.world_empty_height - 10
+  let ball_position : t_vec2 = !(ball.position) in
+  let ball_speed : t_vec2 = !(ball.speed) in
+
+  let paddle_x1 : int =
+    paddle_x game - (paddle_size_pixel game) / 4
+  and paddle_x2 : int =
+    (paddle_x game - (paddle_size_pixel game) / 4) + param.paddle_init_width
+  and paddle_y1 : int =
+    param.world_bricks_height + param.world_empty_height - param.paddle_init_height - 10
+  and paddle_y2 : int =
+    param.world_bricks_height + param.world_empty_height - 10
   in
 
   if
     is_inside_quad (paddle_x1, paddle_y1, paddle_x2 - 4 * 20 , paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
-    ball_modif_speed (game, ball, make_vec2 (-2, -1))
+    ball_modif_speed (game, ball, make_vec2 (-2, - ball_speed.y))
   end else if
     is_inside_quad (paddle_x1 + 1 * 20, paddle_y1, paddle_x2 - 3 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
-    ball_modif_speed (game, ball, make_vec2 (-1, -1))
+    ball_modif_speed (game, ball, make_vec2 (-1, - ball_speed.y))
   end else if
     is_inside_quad (paddle_x1 + 2 * 20, paddle_y1, paddle_x2 - 2 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
-    ball_modif_speed (game, ball, make_vec2 (0, -1))
+    ball_modif_speed (game, ball, make_vec2 (0, - ball_speed.y))
   end else if
     is_inside_quad (paddle_x1 + 3 * 20, paddle_y1, paddle_x2 - 1 * 20, paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
-    ball_modif_speed(game, ball, make_vec2 (1, -1))
+    ball_modif_speed(game, ball, make_vec2 (1, - ball_speed.y))
   end else if
     is_inside_quad (paddle_x1 + 4 * 20, paddle_y1, paddle_x2 , paddle_y2, ball_position.x - (param.world_width / 2), ball_position.y)
   then begin
     ball_modif_speed_sign (game, ball, make_vec2 (0, 0));
-    ball_modif_speed (game, ball, make_vec2 (2, -1))
+    ball_modif_speed (game, ball, make_vec2 (2, - ball_speed.y))
   end
 ;;
 
@@ -1102,13 +1108,26 @@ let animate_action (game : t_camlbrick) : unit =
       && pos_y <= Array.length game.matrix.(0) - 1
     then begin
       (* Vérification de s'il y a une brique *)
-      if brick_get (game, pos_x,pos_y) <> BK_empty then (
+      if brick_get (game, pos_x, pos_y) <> BK_empty then (
         if
           ball_hit_corner_brick (game, ball, pos_x, pos_y)
           || ball_hit_side_brick(game, ball, pos_x, pos_y)
         then begin
           ball_modif_speed_sign (game, ball, make_vec2 (1, -1));
-          game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y)
+          game.matrix.(pos_x).(pos_y) <- brick_hit (game, pos_x, pos_y);
+
+          (* S'il s'agit d'une brique bonus *)
+          if brick_get (game, pos_x, pos_y) = BK_bonus then begin
+            (* On détruit les 2 briques adjacentes *)
+            game.matrix.(pos_x + 1).(pos_y) <- brick_hit (game, pos_x + 1, pos_y);
+            game.matrix.(pos_x + 2).(pos_y) <- brick_hit (game, pos_x + 2, pos_y);
+            game.matrix.(pos_x - 1).(pos_y) <- brick_hit (game, pos_x - 1, pos_y);
+            game.matrix.(pos_x - 2).(pos_y) <- brick_hit (game, pos_x - 2, pos_y);
+            game.matrix.(pos_x).(pos_y + 1) <- brick_hit (game, pos_x, pos_y + 1);
+            game.matrix.(pos_x).(pos_y + 2) <- brick_hit (game, pos_x, pos_y + 2);
+            game.matrix.(pos_x).(pos_y - 1) <- brick_hit (game, pos_x, pos_y - 1);
+            game.matrix.(pos_x).(pos_y - 2) <- brick_hit (game, pos_x, pos_y - 2)
+          end
         end
       );
     end;
