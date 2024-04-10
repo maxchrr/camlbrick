@@ -299,12 +299,12 @@ let make_camlbrick () : t_camlbrick =
         position = ref (make_vec2 (400, 750));
         speed = ref (make_vec2 (-3, -3));
         size = BS_MEDIUM
-      };
+      }(*;
       {
         position = ref (make_vec2 (500, 750));
         speed = ref (make_vec2 (2, -2));
         size = BS_BIG
-      }
+      }*)
     ];
     speed = ref 5
   }
