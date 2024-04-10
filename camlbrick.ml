@@ -381,7 +381,8 @@ let brick_get (game, i, j : t_camlbrick * int * int) : t_brick_kind =
 ;;
 
 (**
-  Cette fonction retrace grâce au coordonnées de i et j le type dans le tableau game et change son type en fonction de son type précedemment.
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
 
   @author Axel De Les Champs--Vieira
   @author Max Charrier
@@ -442,7 +443,7 @@ let paddle_x (game : t_camlbrick) : int =
 ;;
 
 (**
-  Renvoie la taille en pixel de la raquette
+  Renvoie la taille en pixel de la raquette.
 
   @author Paul Ourliac
   @param game partie en cours d'exécution

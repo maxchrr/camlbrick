@@ -23,7 +23,9 @@ let game : t_camlbrick = {
 };;
 
 (**
-  Cette suite de tests temoignent du fonctionement de notre raquette
+  Test structurel de `make_paddle`.
+
+ Création d'une raquette par défaut au milieu de l'écran et de taille normal.
 
   @author Matéo Abrane
   @author Max Charrier
@@ -41,6 +43,15 @@ let test_struct_make_paddle () : unit =
     res
   )
 ;;
+
+(**
+  Test structurel de `paddle_x`.
+
+  Renvoie la position selon l'axe horizontale de la raquette.
+
+  @author Matéo Abrane
+  @author Max Charrier
+*)
 let test_struct_paddle_x () : unit =
   let res : int t_test_result = test_exec (
     paddle_x,
@@ -51,6 +62,15 @@ let test_struct_paddle_x () : unit =
 
   assert_equals (0, test_get res)
 ;;
+
+(**
+  Test structurel de `paddle_size_pixel`.
+
+  Renvoie la taille en pixel de la raquette.
+
+  @author Matéo Abrane
+  @author Max Charrier
+*)
 let test_struct_paddle_size_pixel () : unit =
   let res : int t_test_result = test_exec (
     paddle_size_pixel,
@@ -113,7 +133,7 @@ let test_fonc_balls_get () : unit =
   )
   in
 
-  assert_equals (test_get res, 
+  assert_equals (test_get res,
   [{
     position = ref (make_vec2 (0, 0));
     speed = ref (make_vec2 (0, 0));
@@ -136,7 +156,7 @@ let test_fonc_ball_get () : unit =
   )
   in
 
-  assert_equals (test_get res, 
+  assert_equals (test_get res,
   {
     position = ref (make_vec2 (0, 0));
     speed = ref (make_vec2 (0, 0));

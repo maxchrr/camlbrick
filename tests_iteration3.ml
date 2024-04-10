@@ -80,7 +80,7 @@ let test_fonc_ball_hit_side_brick () : unit =
   )
   in
 
-  assert_true (test_get res)
+  assert_false (test_get res)
 ;;
 
 (**

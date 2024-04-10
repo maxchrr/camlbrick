@@ -111,19 +111,164 @@ let test_fonc_brick_get () : unit =
 (**
   Test structurel de `brick_hit`.
 
-  Réalise les modifications dans la zone de brique pour faire évoluer une brique comme si elle était touchée par une balle.
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
 
   @author Max Charrier
 *)
 let test_struct_brick_hit () : unit =
-  let res : unit t_test_result = test_exec (
+  let res : t_brick_kind t_test_result = test_exec (
     brick_hit,
     "Structurel -> brick_hit",
-    (game, 6, 4)
+    (game, 0, 0)
   )
   in
 
   assert_true (test_has_value res)
+;;
+
+(**
+  Test fonctionnel de la spécification de `brick_hit` avec des briques simple.
+
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
+
+  @author Max Charrier
+*)
+let test_fonc_brick_hit_simple () : unit =
+  (* On génère que des briques simple *)
+  let game_brick_simple : t_camlbrick = {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix canvas_height canvas_width BK_simple;
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 0, 0)
+    };
+    balls = [{
+      position = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }];
+    speed = ref 0
+  }
+  in
+
+  let res : t_brick_kind t_test_result = test_exec (
+    brick_hit,
+    "Fonctionnel -> brick_hit_simple",
+    (game_brick_simple, 0, 0)
+  )
+  in
+
+  assert_equals (BK_empty, test_get res)
+;;
+
+(**
+  Test fonctionnel de la spécification de `brick_hit` avec des briques double.
+
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
+
+  @author Max Charrier
+*)
+let test_fonc_brick_hit_double () : unit =
+  (* On génère que des briques double *)
+  let game_brick_double : t_camlbrick = {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix canvas_height canvas_width BK_double;
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 0, 0)
+    };
+    balls = [{
+      position = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }];
+    speed = ref 0
+  }
+  in
+
+  let res : t_brick_kind t_test_result = test_exec (
+    brick_hit,
+    "Fonctionnel -> brick_hit_double",
+    (game_brick_double, 0, 0)
+  )
+  in
+
+  assert_equals (BK_simple, test_get res)
+;;
+
+(**
+  Test fonctionnel de la spécification de `brick_hit` avec des briques bonus.
+
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
+
+  @author Max Charrier
+*)
+let test_fonc_brick_hit_bonus () : unit =
+  (* On génère que des briques bonus *)
+  let game_brick_bonus : t_camlbrick = {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix canvas_height canvas_width BK_bonus;
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 0, 0)
+    };
+    balls = [{
+      position = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }];
+    speed = ref 0
+  }
+  in
+
+  let res : t_brick_kind t_test_result = test_exec (
+    brick_hit,
+    "Fonctionnel -> brick_hit_bonus",
+    (game_brick_bonus, 0, 0)
+  )
+  in
+
+  assert_equals (BK_empty, test_get res)
+;;
+
+(**
+  Test fonctionnel de la spécification de `brick_hit` avec des briques block.
+
+  Retrace grâce au coordonnées de i et j le type dans la matrice de brique et
+  change son type en fonction de son type précedemment.
+
+  @author Max Charrier
+*)
+let test_fonc_brick_hit_block () : unit =
+  (* On génère que des briques block *)
+  let game_brick_block : t_camlbrick = {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix canvas_height canvas_width BK_block;
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 0, 0)
+    };
+    balls = [{
+      position = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }];
+    speed = ref 0
+  }
+  in
+
+  let res : t_brick_kind t_test_result = test_exec (
+    brick_hit,
+    "Fonctionnel -> brick_hit_block",
+    (game_brick_block, 0, 0)
+  )
+  in
+
+  assert_equals (BK_block, test_get res)
 ;;
 
 (**
@@ -134,6 +279,7 @@ let test_struct_brick_hit () : unit =
   @author Max Charrier
 *)
 let test_fonc_brick_color_empty () : unit =
+  (* On génère que des briques vide *)
   let game_brick_empty : t_camlbrick = {
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_empty;
@@ -163,11 +309,12 @@ let test_fonc_brick_color_empty () : unit =
 (**
   Test fonctionnel de la spécification de `brick_color` avec une brique simple.
 
-  Renvoie une couleur en focnction du type de brique.
+  Renvoie une couleur en fonction du type de brique.
 
   @author Max Charrier
 *)
 let test_fonc_brick_color_simple () : unit =
+  (* On génère que des briques simple *)
   let game_brick_simple : t_camlbrick = {
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_simple;
@@ -202,6 +349,7 @@ let test_fonc_brick_color_simple () : unit =
   @author Max Charrier
 *)
 let test_fonc_brick_color_double () : unit =
+  (* On génère que des briques double *)
   let game_brick_double : t_camlbrick = {
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_double;
@@ -229,40 +377,6 @@ let test_fonc_brick_color_double () : unit =
 ;;
 
 (**
-  Test fonctionnel de la spécification de `brick_color` avec une brique block.
-
-  Renvoie une couleur en focnction du type de brique.
-
-  @author Max Charrier
-*)
-let test_fonc_brick_color_block () : unit =
-  let game_brick_block : t_camlbrick = {
-    param = make_camlbrick_param ();
-    matrix = Array.make_matrix canvas_height canvas_width BK_block;
-    paddle =  {
-      size = PS_MEDIUM;
-      position = (ref 0, 0)
-    };
-    balls = [{
-      position = ref (make_vec2 (0, 0));
-      speed = ref (make_vec2 (0, 0));
-      size = BS_MEDIUM
-    }];
-    speed = ref 0
-  }
-  in
-
-  let res : t_camlbrick_color t_test_result = test_exec (
-    brick_color,
-    "Fonctionnel -> brick_color_block",
-    (game_brick_block, 0, 0)
-  )
-  in
-
-  assert_equals (ORANGE, test_get res)
-;;
-
-(**
   Test fonctionnel de la spécification de `brick_color` avec une brique bonus.
 
   Renvoie une couleur en focnction du type de brique.
@@ -270,6 +384,7 @@ let test_fonc_brick_color_block () : unit =
   @author Max Charrier
 *)
 let test_fonc_brick_color_bonus () : unit =
+  (* On génère que des briques bonus *)
   let game_brick_bonus : t_camlbrick = {
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_bonus;
@@ -296,6 +411,41 @@ let test_fonc_brick_color_bonus () : unit =
   assert_equals (BLUE, test_get res)
 ;;
 
+(**
+  Test fonctionnel de la spécification de `brick_color` avec une brique block.
+
+  Renvoie une couleur en focnction du type de brique.
+
+  @author Max Charrier
+*)
+let test_fonc_brick_color_block () : unit =
+  (* On génère que des briques block *)
+  let game_brick_block : t_camlbrick = {
+    param = make_camlbrick_param ();
+    matrix = Array.make_matrix canvas_height canvas_width BK_block;
+    paddle =  {
+      size = PS_MEDIUM;
+      position = (ref 0, 0)
+    };
+    balls = [{
+      position = ref (make_vec2 (0, 0));
+      speed = ref (make_vec2 (0, 0));
+      size = BS_MEDIUM
+    }];
+    speed = ref 0
+  }
+  in
+
+  let res : t_camlbrick_color t_test_result = test_exec (
+    brick_color,
+    "Fonctionnel -> brick_color_block",
+    (game_brick_block, 0, 0)
+  )
+  in
+
+  assert_equals (ORANGE, test_get res)
+;;
+
 test_reset_report ();;
 
 test_fonc_make_vec2 ();;
@@ -304,10 +454,14 @@ test_fonc_vec2_mult ();;
 test_struct_param_get ();;
 test_fonc_brick_get ();;
 test_struct_brick_hit ();;
+test_fonc_brick_hit_simple ();;
+test_fonc_brick_hit_double ();;
+test_fonc_brick_hit_bonus ();;
+test_fonc_brick_hit_block ();;
 test_fonc_brick_color_empty ();;
 test_fonc_brick_color_simple ();;
 test_fonc_brick_color_double ();;
-test_fonc_brick_color_block ();;
 test_fonc_brick_color_bonus ();;
+test_fonc_brick_color_block ();;
 
 test_report ();;
