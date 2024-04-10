@@ -83,10 +83,29 @@ let test_fonc_ball_hit_side_brick () : unit =
   assert_true (test_get res)
 ;;
 
+(**
+  Test structurel de `ball_hit_paddle`.
+
+  Vérifie si une balle touche un des sommets des briques.
+
+  @author Axel De Les Champs--Vieira
+*)
+let test_struct_ball_hit_paddle () : unit =
+  let res : unit t_test_result = test_exec (
+    ball_hit_paddle,
+    "Structurel -> ball_hit_paddle",
+    (game, List.hd game.balls, game.paddle)
+  )
+  in
+
+  assert_true (test_has_value res)
+;;
+
 test_reset_report ();;
 
 test_fonc_ball_remove_out_of_border ();;
 test_fonc_ball_hit_corner_brick ();;
 test_fonc_ball_hit_side_brick ();;
+test_struct_ball_hit_paddle ();;
 
 test_report ();;
