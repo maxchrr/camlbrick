@@ -14,11 +14,12 @@ let game : t_camlbrick = {
     size = PS_MEDIUM;
     position = (ref 0, 0)
   };
-  ball = [{
-    position = (0, 0);
+  balls = [{
+    position = ref (make_vec2 (0, 0));
     speed = ref (make_vec2 (0, 0));
     size = BS_MEDIUM
-  }]
+  }];
+  speed = ref 0
 };;
 
 (**
@@ -140,11 +141,12 @@ let test_fonc_brick_color_empty () : unit =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
-      position = (0, 0);
+    balls = [{
+      position = ref (make_vec2 (0, 0));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
   in
 
@@ -173,11 +175,12 @@ let test_fonc_brick_color_simple () : unit =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
-      position = (0, 0);
+    balls = [{
+      position = ref (make_vec2 (0, 0));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
   in
 
@@ -206,11 +209,12 @@ let test_fonc_brick_color_double () : unit =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
-      position = (0, 0);
+    balls = [{
+      position = ref (make_vec2 (0, 0));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
   in
 
@@ -239,11 +243,12 @@ let test_fonc_brick_color_block () : unit =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
-      position = (0, 0);
+    balls = [{
+      position = ref (make_vec2 (0, 0));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
   in
 
@@ -272,11 +277,12 @@ let test_fonc_brick_color_bonus () : unit =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    ball = [{
-      position = (0, 0);
+    balls = [{
+      position = ref (make_vec2 (0, 0));
       speed = ref (make_vec2 (0, 0));
       size = BS_MEDIUM
-    }]
+    }];
+    speed = ref 0
   }
   in
 
