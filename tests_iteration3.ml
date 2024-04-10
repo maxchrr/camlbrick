@@ -33,7 +33,14 @@ let test_fonc_ball_remove_out_of_border () : unit =
   let res : t_ball list t_test_result = test_exec (
     ball_remove_out_of_border,
     "Fonctionnel -> ball_remove_out_of_border",
-    (game, game.balls)
+    (
+      game,
+      [{
+        position = ref (make_vec2 (900, 900)); (* Position en dehors *)
+        speed = ref (make_vec2 (0, 0));
+        size = BS_MEDIUM
+      }]
+    )
   )
   in
 
