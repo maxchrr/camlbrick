@@ -11,6 +11,8 @@ else
 	LABLTK_DIR = +labltk
 endif
 
+.PHONY: all camlbrick test html compress clean cleanup
+
 all: camlbrick
 
 # Cible de build
@@ -47,5 +49,3 @@ clean:
 # Cible pour nettoyer les fichiers générés lors de la compilation, hors binaires
 cleanup:
 	@rm -rf *.cm* camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz docs/*.{html,css}
-
-.PHONY: build test html compress clean
