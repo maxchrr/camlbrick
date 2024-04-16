@@ -829,14 +829,6 @@ let game_test_hit_balls (game, balls : t_camlbrick * t_ball list) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
-  (*
-  print_string "Mouse moved: ";
-  print_string " x=";
-  print_int x;
-  print_string " y=";
-  print_int y;
-  print_newline ()
-  *)
   ()
 ;;
 
@@ -854,7 +846,6 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  (*
   print_string "Mouse pressed: ";
   print_string " button=";
   print_int button;
@@ -863,8 +854,6 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   print_string " y=";
   print_int y;
   print_newline ()
-  *)
-  ()
 ;;
 
 (**
@@ -881,16 +870,6 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   @param y l'ordonnée de la position du relachement
 *)
 let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  (*
-  print_string "Mouse released: ";
-  print_string " button=";
-  print_int button;
-  print_string " x=";
-  print_int x;
-  print_string " y=";
-  print_int y;
-  print_newline ()
-  *)
   ()
 ;;
 
@@ -911,31 +890,6 @@ let canvas_mouse_click_release (game, button, x, y : t_camlbrick * int * int * i
   @param keyCode code entier de la touche appuyée
 *)
 let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) : unit =
-  (*
-  print_string "Key pressed: ";
-  print_string key_string;
-  print_string " code=";
-  print_int key_code;
-  print_newline ()
-  *)
-  (*
-  Key pressed: z code=122
-  Key released: z code=122
-  Key pressed: q code=113
-  Key released: q code=113
-  Key pressed: s code=115
-  Key released: s code=115
-  Key pressed: d code=100
-  Key released: d code=100
-  Key pressed: Up code=65362
-  Key released: Up code=65362
-  Key pressed: Left code=65361
-  Key released: Left code=65361
-  Key pressed: Down code=65364
-  Key released: Down code=65364
-  Key pressed: Right code=65363
-  Key released: Right code=65363
-  *)
   let left_key_code : int = 65361 in
   let q_key_code : int = 113 in
   let right_key_code : int = 65363 in
@@ -966,13 +920,6 @@ let canvas_keypressed (game, key_string, key_code : t_camlbrick * string * int) 
   @param keyCode code entier de la touche relachée
 *)
 let canvas_keyreleased (game, key_string, key_code : t_camlbrick * string * int) : unit =
-  (*
-  print_string "Key released: ";
-  print_string key_string;
-  print_string " code=";
-  print_int key_code;
-  print_newline ()
-  *)
   ()
 ;;
 
