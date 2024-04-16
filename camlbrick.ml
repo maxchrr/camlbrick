@@ -975,9 +975,7 @@ let stop_onclick (game : t_camlbrick) : unit =
   let balls : t_ball list ref = ref game.balls in
 
   (* Supprimer toutes les balles *)
-  while !balls <> [] do
-    balls := List.tl !balls
-  done
+  balls := []
 ;;
 
 (**
