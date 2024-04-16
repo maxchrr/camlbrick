@@ -40,6 +40,8 @@ html: camlbrick.cmo camlbrick_gui.cmo $(SRC)
 
 # Cible pour compresser les fichiers source et la documentation
 compress: docs camlbrick.ml camlbrick_gui.ml camlbrick_launcher.ml Makefile tests_iteration1.ml tests_iteration2.ml tests_iteration3.ml
+	@make clean
+	@make html
 	tar -czvf camlbrick_CHARRIER_OURLIAC_ABRANE_DE-LES-CHAMPS--VIEIRA.tar.gz $^
 
 # Cible pour nettoyer les fichiers générés lors de la compilation
