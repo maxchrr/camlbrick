@@ -294,7 +294,11 @@ let make_camlbrick () : t_camlbrick =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    balls = [];
+    balls = [{
+      position = ref (make_vec2 (400, 750));
+      speed = ref (make_vec2 (-1, -3));
+      size = BS_MEDIUM
+    }];
     speed = ref 5
   }
 ;;
@@ -954,13 +958,6 @@ let custom2_text () : string =
   @param game la partie en cours
 *)
 let start_onclick (game : t_camlbrick) : unit =
-  (* Créer une balle par défaut *)
-  let default_ball : t_ball = {
-    position = ref (make_vec2 (400, 750));
-    speed = ref (make_vec2 (-1, -3));
-    size = BS_MEDIUM
-  }
-  in
   ()
 ;;
 
@@ -977,7 +974,7 @@ let start_onclick (game : t_camlbrick) : unit =
 let stop_onclick (game : t_camlbrick) : unit =
   let balls : t_ball list ref = ref game.balls in
 
-  (* SUpprimer toutes les balles *)
+  (* Supprimer toutes les balles *)
   while !balls <> [] do
     balls := List.tl !balls
   done
