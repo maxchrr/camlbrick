@@ -11,7 +11,7 @@ let game : t_camlbrick = {
   param = make_camlbrick_param ();
   matrix = Array.make_matrix canvas_height canvas_width BK_empty;
   paddle =  {
-    size = PS_MEDIUM;
+    size = ref PS_MEDIUM;
     position = (ref 0, 0)
   };
   balls = [{
@@ -141,7 +141,7 @@ let test_fonc_brick_hit_simple () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_simple;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -177,7 +177,7 @@ let test_fonc_brick_hit_double () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_double;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -213,7 +213,7 @@ let test_fonc_brick_hit_bonus () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_bonus;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -249,7 +249,7 @@ let test_fonc_brick_hit_block () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_block;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -284,7 +284,7 @@ let test_fonc_brick_color_empty () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_empty;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -319,7 +319,7 @@ let test_fonc_brick_color_simple () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_simple;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -354,7 +354,7 @@ let test_fonc_brick_color_double () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_double;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -389,7 +389,7 @@ let test_fonc_brick_color_bonus () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_bonus;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -424,7 +424,7 @@ let test_fonc_brick_color_block () : unit =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix canvas_height canvas_width BK_block;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{

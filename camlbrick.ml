@@ -231,7 +231,7 @@ type t_ball  =
 type t_paddle =
   {
     position : (int ref) * int;
-    size : t_paddle_size
+    size : t_paddle_size ref
   }
 ;;
 
@@ -291,7 +291,7 @@ let make_camlbrick () : t_camlbrick =
     param = make_camlbrick_param ();
     matrix = Array.make_matrix 20 30 BK_empty;
     paddle =  {
-      size = PS_MEDIUM;
+      size = ref PS_MEDIUM;
       position = (ref 0, 0)
     };
     balls = [{
@@ -311,7 +311,7 @@ let make_camlbrick () : t_camlbrick =
 *)
 let make_paddle () : t_paddle =
   {
-    size = PS_MEDIUM;
+    size = ref PS_MEDIUM;
     position = (ref 0, 0)
   }
 ;;
@@ -392,9 +392,11 @@ let brick_hit (game, i, j : t_camlbrick * int * int) : t_brick_kind =
     BK_empty
   else if brick = BK_double then
     BK_simple
-  else if brick = BK_bonus then
+  else if brick = BK_bonus then begin
+    (* Augmentation de la taille de la raquette *)
+    game.paddle.size := PS_BIG;
     BK_empty
-  else if brick = BK_block then
+  end else if brick = BK_block then
     BK_block
   else
     BK_empty
@@ -446,9 +448,9 @@ let paddle_x (game : t_camlbrick) : int =
 let paddle_size_pixel (game : t_camlbrick) : int =
   let param : t_camlbrick_param = param_get game in
 
-  if game.paddle.size = PS_SMALL then
+  if !(game.paddle.size) = PS_SMALL then
     param.paddle_init_width
-  else if game.paddle.size = PS_MEDIUM then
+  else if !(game.paddle.size) = PS_MEDIUM then
     param.paddle_init_width * 2
   else
     param.paddle_init_width * 4

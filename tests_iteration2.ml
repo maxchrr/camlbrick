@@ -11,7 +11,7 @@ let game : t_camlbrick = {
   param = make_camlbrick_param ();
   matrix = Array.make_matrix canvas_height canvas_width BK_empty;
   paddle =  {
-    size = PS_MEDIUM;
+    size = ref PS_MEDIUM;
     position = (ref 0, 0)
   };
   balls = [{
@@ -25,7 +25,7 @@ let game : t_camlbrick = {
 (**
   Test structurel de `make_paddle`.
 
- Création d'une raquette par défaut au milieu de l'écran et de taille normal.
+  Création d'une raquette par défaut au milieu de l'écran et de taille normal.
 
   @author Matéo Abrane
   @author Max Charrier
@@ -39,7 +39,7 @@ let test_struct_make_paddle () : unit =
   in
 
   assert_equals_result (
-    { size = PS_MEDIUM ; position = (ref 0, 0)},
+    { size = ref PS_MEDIUM ; position = (ref 0, 0)},
     res
   )
 ;;

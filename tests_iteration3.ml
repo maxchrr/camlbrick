@@ -11,7 +11,7 @@ let game : t_camlbrick = {
   param = make_camlbrick_param ();
   matrix = Array.make_matrix canvas_height canvas_width BK_empty;
   paddle =  {
-    size = PS_MEDIUM;
+    size = ref PS_MEDIUM;
     position = (ref 0, 0)
   };
   balls = [{
