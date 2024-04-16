@@ -5,7 +5,7 @@ open CPtest;;
 open Camlbrick;;
 
 let canvas_height : int = 20;;
-let canvas_width : int = 31;;
+let canvas_width : int = 30;;
 
 let game : t_camlbrick = {
   param = make_camlbrick_param ();
