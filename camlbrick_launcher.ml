@@ -5,7 +5,7 @@ let game : t_camlbrick = make_camlbrick ();;
 let param : t_camlbrick_param = param_get game;;
 
 (* Charger le niveau par défaut ici *)
-
+Random.self_init ();
 let tab : t_brick_kind array = [| BK_empty; BK_simple; BK_double |] in
 let count : int ref = ref 0 in
 for x = 0 to Array.length game.matrix - 1 do
