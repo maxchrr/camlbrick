@@ -471,8 +471,6 @@ let paddle_move_left (game : t_camlbrick) : unit =
     paddle_x game > (paddle_size_pixel game) / 4 - game.param.world_width / 2
   then
     fst game.paddle.position := !(fst game.paddle.position) - 10
-  else
-    ()
 ;;
 
 (**
@@ -488,8 +486,6 @@ let paddle_move_right (game : t_camlbrick) : unit =
     paddle_x game < (param.world_width / 2) - (paddle_size_pixel game) / 4
   then
     fst game.paddle.position := !(fst game.paddle.position) + 10
-  else
-    ()
 ;;
 
 (**
@@ -692,8 +688,10 @@ let is_inside_quad (x1, y1, x2, y2, x, y : int * int * int * int * int * int) : 
   @return balle restante
 *)
 let ball_remove_out_of_border (game, balls : t_camlbrick * t_ball list ) : t_ball list =
+  let param : t_camlbrick_param = param_get game in
+
   let aux (ball : t_ball) : bool =
-    !(ball.position).y <= 800
+    !(ball.position).y < param.world_width
   in
 
   List.filter aux balls
@@ -846,14 +844,22 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
   @param y l'ordonnée de la position de la souris
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
-  print_string "Mouse pressed: ";
+  (*print_string "Mouse pressed: ";
   print_string " button=";
   print_int button;
   print_string " x=";
   print_int x;
   print_string " y=";
   print_int y;
-  print_newline ()
+  print_newline ()*)
+  let param : t_camlbrick_param = param_get game in
+
+  if y >= 770 && y < param.world_width then
+    if
+      paddle_x game > (paddle_size_pixel game) / 4 - game.param.world_width / 2
+      && paddle_x game < (param.world_width / 2) - (paddle_size_pixel game) / 4
+    then
+      fst game.paddle.position := x
 ;;
 
 (**
