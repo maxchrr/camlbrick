@@ -843,6 +843,9 @@ let canvas_mouse_move (game, x, y : t_camlbrick * int * int) : unit =
 *)
 let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int) : unit =
   let param : t_camlbrick_param = param_get game in
+  let canvas_height : int =
+    param.world_empty_height + param.world_bricks_height
+  in
   let pos_x : int =
     if x > param.world_width / 2 then
       x / 2
@@ -850,7 +853,7 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
       -1 * (-(x + param.world_width / 2) + param.world_width) + (paddle_size_pixel game) / 4
   in
 
-  if y >= 770 && y < param.world_empty_height + param.world_bricks_height then begin
+  if y >= canvas_height - param.paddle_init_height - 10 && y < canvas_height then begin
     print_string "pos init=";
     print_int (paddle_x game);
     print_string " new pos=";
