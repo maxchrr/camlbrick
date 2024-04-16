@@ -392,11 +392,9 @@ let brick_hit (game, i, j : t_camlbrick * int * int) : t_brick_kind =
     BK_empty
   else if brick = BK_double then
     BK_simple
-  else if brick = BK_bonus then begin
-    (* Augmentation de la taille de la raquette *)
-    game.paddle.size := PS_BIG;
+  else if brick = BK_bonus then
     BK_empty
-  end else if brick = BK_block then
+  else if brick = BK_block then
     BK_block
   else
     BK_empty
