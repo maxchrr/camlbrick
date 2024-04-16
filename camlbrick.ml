@@ -857,9 +857,10 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
   if y >= 770 && y < param.world_width then
     if
       paddle_x game > (paddle_size_pixel game) / 4 - game.param.world_width / 2
-      && paddle_x game < (param.world_width / 2) - (paddle_size_pixel game) / 4
     then
-      fst game.paddle.position := x
+      fst game.paddle.position := - (x / 2)
+    else
+      fst game.paddle.position := x / 2
 ;;
 
 (**
