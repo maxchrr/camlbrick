@@ -294,18 +294,7 @@ let make_camlbrick () : t_camlbrick =
       size = PS_MEDIUM;
       position = (ref 0, 0)
     };
-    balls = [
-      {
-        position = ref (make_vec2 (400, 750));
-        speed = ref (make_vec2 (-3, -3));
-        size = BS_MEDIUM
-      }(*;
-      {
-        position = ref (make_vec2 (500, 750));
-        speed = ref (make_vec2 (2, -2));
-        size = BS_BIG
-      }*)
-    ];
+    balls = [];
     speed = ref 5
   }
 ;;
@@ -359,6 +348,7 @@ let make_ball (x, y, size : int * int * int) : t_ball =
 
   TODO : modifier cette fonction.
 
+  @author Max Charrier
   @param game la partie en cours d'exécution.
   @return chaîne de caractère représentant l'état de la partie.
 *)
@@ -960,10 +950,20 @@ let custom2_text () : string =
   cela aura un impact sur les performances si vous dosez mal les temps de
   calcul.
 
+  @author Max Charrier
   @param game la partie en cours
 *)
-let start_onclick (game : t_camlbrick) : unit=
-  ()
+let start_onclick (game : t_camlbrick) : unit =
+  (* Créer une balle par défaut *)
+  let default_ball : t_ball = {
+    position = ref (make_vec2 (400, 750));
+    speed = ref (make_vec2 (-1, -3));
+    size = BS_MEDIUM
+  }
+  in
+  let balls : t_ball list ref = ref game.balls in
+
+  balls := default_ball :: !balls
 ;;
 
 (**
@@ -977,7 +977,12 @@ let start_onclick (game : t_camlbrick) : unit=
   @param game la partie en cours
 *)
 let stop_onclick (game : t_camlbrick) : unit =
-  ()
+  let balls : t_ball list ref = ref game.balls in
+
+  (* SUpprimer toutes les balles *)
+  while !balls <> [] do
+    balls := List.tl !balls
+  done
 ;;
 
 (**
@@ -1022,7 +1027,7 @@ let animate_ball (game, ball, direction : t_camlbrick * t_ball * t_vec2) : unit 
 ;;
 
 (**
-  Met à jour l'état du jeu.
+  Met à jour de l'état du jeu.
 
   Détruit les balles en dehors des limites et vérification de si la partie
   est gagnée ou perdue.
@@ -1032,7 +1037,7 @@ let animate_ball (game, ball, direction : t_camlbrick * t_ball * t_vec2) : unit 
   @param ball balle courante
 *)
 let update_gamestate (game, balls : t_camlbrick * t_ball list ref) : unit =
-  (* On supprime les balles qui sortent *)
+  (* Supprimer les balles qui sortent *)
   balls := ball_remove_out_of_border (game, !balls);
 ;;
 
@@ -1053,7 +1058,7 @@ let animate_action (game : t_camlbrick) : unit =
   update_gamestate (game, balls);
 
   while !balls <> [] do
-    (* On récupère la première balle *)
+    (* Récupère la première balle *)
     let ball : t_ball = List.hd !balls in
     let pos_x : int = !(ball.position).x / param.brick_width in
     let pos_y : int = !(ball.position).y / param.brick_height in
@@ -1097,7 +1102,7 @@ let animate_action (game : t_camlbrick) : unit =
         (* Cas par défault *)
         ball.position := vec2_add (!(ball.position), !(ball.speed));
 
-    (* On passe à la balle suivante *)
+    (* Passage à la balle suivante *)
     balls := List.tl !balls
   done
 ;;
