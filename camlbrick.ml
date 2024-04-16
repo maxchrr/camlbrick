@@ -853,7 +853,10 @@ let canvas_mouse_click_press (game, button, x, y : t_camlbrick * int * int * int
       else
         x - param.world_width / 2
     else
-      -1 * (-(x + param.world_width / 2) + param.world_width) + (paddle_size_pixel game) / 4 + paddle_size_pixel game / 2
+      if x / 2 <= paddle_size_pixel game / 4 - game.param.world_width / 2 then
+        -1 * (param.world_width / 2 - paddle_size_pixel game / 4)
+      else
+        -1 * (-(x + param.world_width / 2) + param.world_width)
   in
 
   if y >= canvas_height - param.paddle_init_height - 10 && y < canvas_height then begin
